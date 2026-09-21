@@ -1,0 +1,101 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PlatformStatus {
+  CONNECTED
+  SIMULATED
+  ERROR
+  DISCONNECTED
+}
+
+model Platform {
+  id           String         @id @default(uuid())
+  slug         String         @unique // "facebook", "youtube", "tiktok", "instagram", "x", "linkedin"
+  name         String
+  handle       String?
+  url          String?
+  status       PlatformStatus @default(CONNECTED)
+  isFallback   Boolean        @default(false)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  metrics      MetricRecord[]
+
+  @@map("platforms")
+}
+
+model MetricRecord {
+  id            String    @id @default(uuid())
+  platformId    String
+  period        String    @default("28d") // "7d", "28d", "90d", "ytd"
+  followers     BigInt    @default(0)
+  views         BigInt    @default(0)
+  watchTimeHrs  Float?    @default(0)
+  newFollowers  Int       @default(0)
+  engagement    BigInt    @default(0)
+  recordedAt    DateTime  @default(now())
+
+  platform      Platform  @relation(fields: [platformId], references: [id], onDelete: Cascade)
+
+  @@index([platformId, period])
+  @@index([recordedAt])
+  @@map("metric_records")
+}
+
+model ExecutiveSummary {
+  id             String    @id @default(uuid())
+  period         String    @default("28d") // "7d", "28d", "90d", "ytd"
+  totalFollowers BigInt    @default(0)
+  watchTimeHrs   Float     @default(0)
+  newFollowers   Int       @default(0)
+  contentViews   BigInt    @default(0)
+  engagement     BigInt    @default(0)
+  calculatedAt   DateTime  @default(now())
+
+  @@index([period, calculatedAt])
+  @@map("executive_summaries")
+}
+
+model SyncAuditLog {
+  id         String   @id @default(uuid())
+  timestamp  DateTime @default(now())
+  status     String   // "success", "error", "warning", "initialized"
+  message    String
+  details    Json?
+
+  @@index([timestamp])
+  @@map("sync_audit_logs")
+}
+
+model SystemSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       String
+  isSensitive Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+enum UserRole {
+  ADMIN
+  EXECUTIVE
+}
+
+model User {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  passwordHash String
+  fullName     String
+  role         UserRole  @default(EXECUTIVE)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("users")
+}

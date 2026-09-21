@@ -1,0 +1,33 @@
+import { state } from '../state/dashboardState.js';
+
+export class ViewRouter {
+  constructor() {
+    window.addEventListener('hashchange', () => this.handleRoute());
+  }
+
+  init() {
+    this.handleRoute();
+  }
+
+  handleRoute() {
+    const hash = window.location.hash || '#dashboard';
+
+    if (hash.startsWith('#platform/')) {
+      const platformKey = hash.replace('#platform/', '').trim().toLowerCase();
+      state.setView('platform', platformKey);
+    } else if (hash === '#settings') {
+      state.setView('settings');
+    } else {
+      state.setView('dashboard');
+    }
+  }
+
+  static navigate(hash) {
+    if (window.location.hash === hash) {
+      // Force route handling if already on same hash
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    } else {
+      window.location.hash = hash;
+    }
+  }
+}

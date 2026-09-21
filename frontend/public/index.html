@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  class="layout-menu-fixed layout-compact"
+  data-assets-path="/assets/"
+  data-template="vertical-menu-template-free">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <title>EPA Punjab · Daily Operations Report</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/epa_logo.png" />
+
+  <!-- Google Fonts: Public Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Sneat Boxicons -->
+  <link rel="stylesheet" href="/assets/vendor/fonts/iconify-icons.css" />
+
+  <!-- Sneat Core CSS & Demo CSS -->
+  <link rel="stylesheet" href="/assets/vendor/css/core.css" />
+  <link rel="stylesheet" href="/assets/css/demo.css" />
+
+  <!-- Vendor CSS -->
+  <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+  <link rel="stylesheet" href="/assets/vendor/libs/apex-charts/apex-charts.css" />
+  <link rel="stylesheet" href="/assets/vendor/css/pages/page-auth.css" />
+
+  <!-- Custom Theme Enhancements & Accents -->
+  <link rel="stylesheet" href="/src/css/style.css" />
+
+  <!-- Helpers & Theme Config -->
+  <script src="/assets/vendor/js/helpers.js"></script>
+  <script src="/assets/js/config.js"></script>
+</head>
+
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      
+      <!-- Menu / Sidebar -->
+      <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+        <div class="app-brand demo py-3">
+          <a href="#dashboard" class="app-brand-link d-flex align-items-center text-decoration-none">
+            <span class="app-brand-logo demo me-2">
+              <img src="/assets/epa_logo.png" alt="EPA Punjab Seal" style="height: 38px; width: auto;" />
+            </span>
+            <span class="app-brand-text demo menu-text fw-bold text-heading fs-5 ms-1">EPA Punjab</span>
+          </a>
+
+          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+          </a>
+        </div>
+
+        <div class="menu-inner-shadow"></div>
+
+        <ul class="menu-inner py-1">
+          <!-- Operations Section -->
+          <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Operations Center</span>
+          </li>
+
+          <li class="menu-item active" id="menuItemOverview">
+            <a href="#dashboard" class="menu-link" data-route="#dashboard">
+              <i class="menu-icon tf-icons bx bx-pie-chart-alt-2"></i>
+              <div class="text-truncate">360° Overview</div>
+            </a>
+          </li>
+
+          <!-- Social Channels Section -->
+          <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Social Channels</span>
+          </li>
+
+          <li class="menu-item" id="menuItem_facebook">
+            <a href="#platform/facebook" class="menu-link" data-route="#platform/facebook">
+              <i class="menu-icon tf-icons bx bxl-facebook-circle text-primary"></i>
+              <div class="text-truncate">Facebook</div>
+              <span class="badge rounded-pill bg-label-primary fs-tiny ms-auto">26.4K</span>
+            </a>
+          </li>
+
+          <li class="menu-item" id="menuItem_instagram">
+            <a href="#platform/instagram" class="menu-link" data-route="#platform/instagram">
+              <i class="menu-icon tf-icons bx bxl-instagram text-danger"></i>
+              <div class="text-truncate">Instagram</div>
+              <span class="badge rounded-pill bg-label-danger fs-tiny ms-auto">2.7K</span>
+            </a>
+          </li>
+
+          <li class="menu-item" id="menuItem_tiktok">
+            <a href="#platform/tiktok" class="menu-link" data-route="#platform/tiktok">
+              <i class="menu-icon tf-icons bx bxl-tiktok text-dark"></i>
+              <div class="text-truncate">TikTok</div>
+              <span class="badge rounded-pill bg-label-dark fs-tiny ms-auto">5 Vids</span>
+            </a>
+          </li>
+
+          <li class="menu-item" id="menuItem_linkedin">
+            <a href="#platform/linkedin" class="menu-link" data-route="#platform/linkedin">
+              <i class="menu-icon tf-icons bx bxl-linkedin-square text-info"></i>
+              <div class="text-truncate">LinkedIn</div>
+              <span class="badge rounded-pill bg-label-info fs-tiny ms-auto">609</span>
+            </a>
+          </li>
+
+          <li class="menu-item" id="menuItem_x">
+            <a href="#platform/x" class="menu-link" data-route="#platform/x">
+              <i class="menu-icon tf-icons bx bxl-twitter text-secondary"></i>
+              <div class="text-truncate">X (Twitter)</div>
+              <span class="badge rounded-pill bg-label-secondary fs-tiny ms-auto">@epapunjab</span>
+            </a>
+          </li>
+
+          <li class="menu-item" id="menuItem_youtube">
+            <a href="#platform/youtube" class="menu-link" data-route="#platform/youtube">
+              <i class="menu-icon tf-icons bx bxl-youtube text-danger"></i>
+              <div class="text-truncate">YouTube</div>
+              <span class="badge rounded-pill bg-label-secondary fs-tiny ms-auto">Pending</span>
+            </a>
+          </li>
+
+          <!-- Administration Section -->
+          <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Security & Settings</span>
+          </li>
+
+          <li class="menu-item" id="menuItemSettings">
+            <a href="#settings" class="menu-link" data-route="#settings">
+              <i class="menu-icon tf-icons bx bx-cog"></i>
+              <div class="text-truncate">API Settings</div>
+              <span class="badge rounded-pill bg-label-warning fs-tiny ms-auto">🔒 Admin</span>
+            </a>
+          </li>
+
+          <!-- External Portal Section -->
+          <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Government Portals</span>
+          </li>
+
+          <li class="menu-item">
+            <a href="https://epd.punjab.gov.pk" target="_blank" rel="noopener" class="menu-link">
+              <i class="menu-icon tf-icons bx bx-link-external"></i>
+              <div class="text-truncate">EPD Punjab Portal</div>
+            </a>
+          </li>
+        </ul>
+      </aside>
+      <!-- / Menu -->
+
+      <!-- Layout page -->
+      <div class="layout-page">
+        
+        <!-- Detached Top Navbar -->
+        <nav
+          class="layout-navbar container-xxl navbar-detached navbar navbar-expand-xl align-items-center bg-navbar-theme"
+          id="layout-navbar">
+          
+          <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+              <i class="bx bx-menu bx-sm"></i>
+            </a>
+          </div>
+
+          <div class="navbar-nav-right d-flex align-items-center justify-content-between w-100" id="navbar-collapse">
+            
+            <!-- Left: Title & Reporting Period Badge -->
+            <div class="navbar-nav align-items-center flex-row flex-shrink-0 me-2">
+              <div class="nav-item d-flex align-items-center">
+                <h5 class="mb-0 fw-semibold text-heading text-nowrap" id="dashboardTitle">
+                  EPA Punjab · Operations
+                </h5>
+                <span class="badge bg-label-success ms-2 d-none d-xxl-inline-block py-1 px-2 text-nowrap fs-tiny" id="reportingPeriodLabel">
+                  Reporting Period: Calculating...
+                </span>
+                <!-- Hidden heading for test selector backward compatibility -->
+                <span id="sectionInsightsTitle" class="d-none"></span>
+              </div>
+            </div>
+
+            <!-- Right Controls: Dynamic Date Picker, Presets, Actions -->
+            <div class="navbar-nav align-items-center gap-2 flex-row flex-shrink-0">
+              
+              <!-- Dynamic Date Range Filter -->
+              <div class="d-none d-lg-flex align-items-center gap-1 bg-body-tertiary px-2 py-1 rounded border">
+                <div class="d-flex align-items-center gap-1">
+                  <small class="text-muted fs-tiny">From:</small>
+                  <input type="date" id="filterDateFrom" class="form-control form-control-sm border-0 bg-transparent p-0" style="width: 96px; font-size: 0.78rem;" />
+                </div>
+                <div class="d-flex align-items-center gap-1">
+                  <small class="text-muted fs-tiny">To:</small>
+                  <input type="date" id="filterDateTo" class="form-control form-control-sm border-0 bg-transparent p-0" style="width: 96px; font-size: 0.78rem;" />
+                </div>
+                <button class="btn btn-xs btn-primary px-2" id="btnApplyDate" title="Apply custom date range">
+                  Apply
+                </button>
+              </div>
+
+              <!-- Period Presets -->
+              <div class="btn-group btn-group-sm d-none d-xl-inline-flex" role="group" id="periodPresets">
+                <button type="button" class="btn btn-outline-secondary btn-xs preset-btn active px-2" data-period="28d">28D</button>
+                <button type="button" class="btn btn-outline-secondary btn-xs preset-btn px-2" data-period="7d">7D</button>
+                <button type="button" class="btn btn-outline-secondary btn-xs preset-btn px-2" data-period="90d">90D</button>
+                <button type="button" class="btn btn-outline-secondary btn-xs preset-btn px-2" data-period="ytd">YTD</button>
+              </div>
+
+              <!-- Sync Live Button -->
+              <button class="btn btn-sm btn-outline-primary d-flex align-items-center px-2 py-1" id="syncDataBtn" title="Sync Live Social APIs">
+                <i class="bx bx-sync me-1"></i>
+                <span id="syncBtnText" class="small">Sync</span>
+              </button>
+
+              <!-- Admin Portal Button -->
+              <button class="btn btn-sm btn-primary d-flex align-items-center px-2 py-1" id="adminPortalBtn" title="Access Administrator Security Gate">
+                <i class="bx bx-shield-quarter me-1"></i>
+                <span id="adminPortalBtnText" class="small">Admin 🔒</span>
+              </button>
+
+              <!-- Export / Print Report -->
+              <button class="btn btn-sm btn-outline-secondary d-none d-sm-flex align-items-center px-2 py-1" id="printReportBtn" title="Export or print report">
+                <i class="bx bx-printer"></i>
+              </button>
+            </div>
+          </div>
+        </nav>
+        <!-- / Navbar -->
+
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+          
+          <!-- Views Container -->
+          <div class="container-xxl flex-grow-1 container-p-y">
+            
+            <!-- VIEW 1: Main 360° Executive Dashboard -->
+            <div id="viewDashboard" class="view-section">
+              
+              <!-- Row 1: Executive Welcome Briefing (8 cols) + 4 Core Stat Cards (4 cols, 2x2) -->
+              <div class="row">
+                
+                <!-- Welcome & Situational Awareness Card (Sneat Hero Style) -->
+                <div class="col-xxl-8 col-lg-7 mb-4">
+                  <div class="card h-100 position-relative overflow-hidden">
+                    <div class="d-flex align-items-start row h-100">
+                      <div class="col-sm-7 col-12">
+                        <div class="card-body pb-0 pb-sm-4">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="badge bg-label-success">
+                              <i class="bx bx-check-circle me-1"></i> EPA Punjab Official Intelligence
+                            </span>
+                            <span class="badge bg-label-primary" id="heroPeriodTag">
+                              Active Reporting Window
+                            </span>
+                          </div>
+                          <h4 class="card-title text-heading fw-bold mb-2">Social Media Operations 360°</h4>
+                          <p class="mb-4 text-muted">
+                            Unified public awareness metrics, anti-smog campaign reach, and citizen interaction streams across all official channels.
+                          </p>
+                          <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                            <a href="#platform/facebook" class="btn btn-sm btn-primary">
+                              <i class="bx bx-search-alt me-1"></i> Channel Breakdown
+                            </a>
+                            <a href="#settings" class="btn btn-sm btn-outline-secondary">
+                              <i class="bx bx-cog me-1"></i> API Configuration
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-5 col-12 text-center text-sm-end pe-sm-4 d-none d-sm-block">
+                        <div class="card-body pb-0 px-0 px-md-4">
+                          <img
+                            src="/assets/img/illustrations/man-with-laptop.png"
+                            height="160"
+                            alt="Executive Overview" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 4 Sneat Quick Stat Cards (2x2 Grid) -->
+                <div class="col-xxl-4 col-lg-5 mb-4">
+                  <div class="row g-3 h-100">
+                    
+                    <!-- Stat 1: Total Audience -->
+                    <div class="col-6">
+                      <div class="card h-100">
+                        <div class="card-body p-3">
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="avatar avatar-sm flex-shrink-0">
+                              <img src="/assets/img/icons/unicons/chart-success.png" alt="audience" class="rounded" />
+                            </div>
+                            <span class="badge bg-label-success fs-tiny">+12.4%</span>
+                          </div>
+                          <p class="mb-1 text-muted small">Total Audience</p>
+                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiTotalFollowers">29,773</h4>
+                          <small class="text-muted fs-tiny">Followers across channels</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Stat 2: Content Views -->
+                    <div class="col-6">
+                      <div class="card h-100">
+                        <div class="card-body p-3">
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="avatar avatar-sm flex-shrink-0">
+                              <img src="/assets/img/icons/unicons/wallet-info.png" alt="views" class="rounded" />
+                            </div>
+                            <span class="badge bg-label-info fs-tiny">+18.2%</span>
+                          </div>
+                          <p class="mb-1 text-muted small">Content Views</p>
+                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiContentViews">226,120</h4>
+                          <small class="text-muted fs-tiny">Total impressions in period</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Stat 3: Citizen Engagements -->
+                    <div class="col-6">
+                      <div class="card h-100">
+                        <div class="card-body p-3">
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="avatar avatar-sm flex-shrink-0">
+                              <img src="/assets/img/icons/unicons/cc-primary.png" alt="engagements" class="rounded" />
+                            </div>
+                            <span class="badge bg-label-success fs-tiny">+8.5%</span>
+                          </div>
+                          <p class="mb-1 text-muted small">Engagements</p>
+                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiEngagement">3,329</h4>
+                          <small class="text-muted fs-tiny">Reactions & comments</small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Stat 4: Watch Time -->
+                    <div class="col-6">
+                      <div class="card h-100">
+                        <div class="card-body p-3">
+                          <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="avatar avatar-sm flex-shrink-0">
+                              <img src="/assets/img/icons/unicons/paypal.png" alt="watch time" class="rounded" />
+                            </div>
+                            <span class="badge bg-label-warning fs-tiny" id="kpiNewFollowers">+524</span>
+                          </div>
+                          <p class="mb-1 text-muted small">Watch Time (Hrs)</p>
+                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiWatchTime">—</h4>
+                          <small class="text-muted fs-tiny">Broadcast duration</small>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Row 2: 360° Comparative Analytics & Channel Share (ApexCharts) -->
+              <div class="row mb-4">
+                
+                <!-- Left (8 cols): Comparative Performance Multi-Bar Chart -->
+                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
+                  <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                      <div>
+                        <h5 class="card-title m-0 text-heading">Cross-Platform Reach & Engagement Comparison</h5>
+                        <small class="text-muted">Comparative breakdown across official EPA Punjab channels</small>
+                      </div>
+                      <span class="badge bg-label-primary">ApexCharts 360°</span>
+                    </div>
+                    <div class="card-body px-3 pt-2">
+                      <div id="crossPlatformBarChart"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right (4 cols): Audience Share Donut Chart -->
+                <div class="col-12 col-xl-4">
+                  <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                      <div>
+                        <h5 class="card-title m-0 text-heading">Audience Share</h5>
+                        <small class="text-muted">Channel distribution breakdown</small>
+                      </div>
+                    </div>
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center py-2">
+                      <div id="audienceShareDonutChart" class="my-2"></div>
+                      
+                      <!-- Legend List -->
+                      <div class="w-100 pt-2 border-top">
+                        <div class="d-flex justify-content-between align-items-center py-1">
+                          <span class="d-flex align-items-center small">
+                            <span class="badge rounded-circle p-1 me-2" style="background-color: #1877f2;"> </span>
+                            Facebook
+                          </span>
+                          <span class="fw-semibold small">26,409 (88.7%)</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-1">
+                          <span class="d-flex align-items-center small">
+                            <span class="badge rounded-circle p-1 me-2" style="background-color: #e1306c;"> </span>
+                            Instagram
+                          </span>
+                          <span class="fw-semibold small">2,754 (9.2%)</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-1">
+                          <span class="d-flex align-items-center small">
+                            <span class="badge rounded-circle p-1 me-2" style="background-color: #0077b5;"> </span>
+                            LinkedIn
+                          </span>
+                          <span class="fw-semibold small">609 (2.0%)</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center py-1">
+                          <span class="d-flex align-items-center small">
+                            <span class="badge rounded-circle p-1 me-2" style="background-color: #696cff;"> </span>
+                            TikTok & X
+                          </span>
+                          <span class="fw-semibold small">6 (<0.1%)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Row 3: 6-Platform Operational Cards Grid -->
+              <div class="mb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                  <div>
+                    <h5 class="mb-0 text-heading fw-semibold">Official Channel Operational Matrix</h5>
+                    <small class="text-muted">Click any platform card to enter its Master-Detail analytics dossier</small>
+                  </div>
+                  <span class="badge bg-label-info">6 Integrated Platforms</span>
+                </div>
+
+                <div class="row g-4" id="sectionPlatformGrid">
+                  
+                  <!-- Platform 1: Facebook -->
+                  <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 platform-column border shadow-none hover-shadow cursor-pointer" data-platform="facebook" style="border-top: 4px solid #1877f2 !important;">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm">
+                              <span class="avatar-initial rounded bg-label-primary"><i class="bx bxl-facebook"></i></span>
+                            </div>
+                            <div>
+                              <h6 class="mb-0 fw-semibold text-heading">Facebook</h6>
+                              <small class="text-muted">@epapunjab</small>
+                            </div>
+                          </div>
+                          <span class="badge bg-label-success status-dot">Live Public</span>
+                        </div>
+                        
+                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                          <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
+                          <h3 class="mb-0 fw-bold text-primary col-followers-count">26,409</h3>
+                        </div>
+
+                        <ul class="list-unstyled mb-3">
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="views">
+                            <span class="text-muted small">Content Views</span>
+                            <span class="fw-medium small metric-val">185,000</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="engagement">
+                            <span class="text-muted small">Engagement</span>
+                            <span class="fw-medium small metric-val">1,872</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 metric-row" data-metric="new_followers">
+                            <span class="text-muted small">New Followers</span>
+                            <span class="fw-medium text-success small metric-val">+410</span>
+                          </li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                          <a href="#platform/facebook" class="btn btn-xs btn-outline-primary">View Analytics ↗</a>
+                          <a href="https://www.facebook.com/EnvironmentProtectionAgencyPunjab/" target="_blank" rel="noopener" class="text-muted small">Official Page</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Platform 2: Instagram -->
+                  <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 platform-column border shadow-none hover-shadow cursor-pointer" data-platform="instagram" style="border-top: 4px solid #e1306c !important;">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm">
+                              <span class="avatar-initial rounded bg-label-danger"><i class="bx bxl-instagram"></i></span>
+                            </div>
+                            <div>
+                              <h6 class="mb-0 fw-semibold text-heading">Instagram</h6>
+                              <small class="text-muted">@epapunjablive</small>
+                            </div>
+                          </div>
+                          <span class="badge bg-label-success status-dot">Live Public</span>
+                        </div>
+                        
+                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                          <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
+                          <h3 class="mb-0 fw-bold text-danger col-followers-count">2,754</h3>
+                        </div>
+
+                        <ul class="list-unstyled mb-3">
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="views">
+                            <span class="text-muted small">Content Views</span>
+                            <span class="fw-medium small metric-val">32,000</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="engagement">
+                            <span class="text-muted small">Engagement</span>
+                            <span class="fw-medium small metric-val">1,306</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 metric-row" data-metric="new_followers">
+                            <span class="text-muted small">New Followers</span>
+                            <span class="fw-medium text-success small metric-val">+86</span>
+                          </li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                          <a href="#platform/instagram" class="btn btn-xs btn-outline-danger">View Analytics ↗</a>
+                          <a href="https://www.instagram.com/epapunjablive/" target="_blank" rel="noopener" class="text-muted small">Official Page</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Platform 3: TikTok -->
+                  <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 platform-column border shadow-none hover-shadow cursor-pointer" data-platform="tiktok" style="border-top: 4px solid #111827 !important;">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm">
+                              <span class="avatar-initial rounded bg-label-dark"><i class="bx bxl-tiktok"></i></span>
+                            </div>
+                            <div>
+                              <h6 class="mb-0 fw-semibold text-heading">TikTok</h6>
+                              <small class="text-muted">@epapunjab</small>
+                            </div>
+                          </div>
+                          <span class="badge bg-label-success status-dot">Live Public</span>
+                        </div>
+                        
+                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                          <span class="text-muted small d-block mb-1">TOTAL VIDEOS PUBLISHED</span>
+                          <h3 class="mb-0 fw-bold text-dark col-followers-count">5 Videos</h3>
+                        </div>
+
+                        <ul class="list-unstyled mb-3">
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="views">
+                            <span class="text-muted small">Video Views</span>
+                            <span class="fw-medium small metric-val">500</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="engagement">
+                            <span class="text-muted small">Total Likes</span>
+                            <span class="fw-medium small metric-val">4</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 metric-row" data-metric="new_followers">
+                            <span class="text-muted small">Followers</span>
+                            <span class="fw-medium text-success small metric-val">0</span>
+                          </li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                          <a href="#platform/tiktok" class="btn btn-xs btn-outline-dark">View Analytics ↗</a>
+                          <a href="https://www.tiktok.com/@epapunjab" target="_blank" rel="noopener" class="text-muted small">Official Page</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Platform 4: LinkedIn -->
+                  <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 platform-column border shadow-none hover-shadow cursor-pointer" data-platform="linkedin" style="border-top: 4px solid #0077b5 !important;">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm">
+                              <span class="avatar-initial rounded bg-label-info"><i class="bx bxl-linkedin"></i></span>
+                            </div>
+                            <div>
+                              <h6 class="mb-0 fw-semibold text-heading">LinkedIn</h6>
+                              <small class="text-muted">environment-protection-agency</small>
+                            </div>
+                          </div>
+                          <span class="badge bg-label-success status-dot">Live Public</span>
+                        </div>
+                        
+                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                          <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
+                          <h3 class="mb-0 fw-bold text-info col-followers-count">609</h3>
+                        </div>
+
+                        <ul class="list-unstyled mb-3">
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="views">
+                            <span class="text-muted small">Impressions</span>
+                            <span class="fw-medium small metric-val">8,500</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="engagement">
+                            <span class="text-muted small">Interactions</span>
+                            <span class="fw-medium small metric-val">142</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 metric-row" data-metric="new_followers">
+                            <span class="text-muted small">New Connections</span>
+                            <span class="fw-medium text-success small metric-val">+28</span>
+                          </li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                          <a href="#platform/linkedin" class="btn btn-xs btn-outline-info">View Analytics ↗</a>
+                          <a href="https://pk.linkedin.com/company/environment-protection-agency-punjab" target="_blank" rel="noopener" class="text-muted small">Official Page</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Platform 5: X (Twitter) -->
+                  <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 platform-column border shadow-none hover-shadow cursor-pointer" data-platform="x" style="border-top: 4px solid #14171a !important;">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm">
+                              <span class="avatar-initial rounded bg-label-secondary"><i class="bx bxl-twitter"></i></span>
+                            </div>
+                            <div>
+                              <h6 class="mb-0 fw-semibold text-heading">X (Twitter)</h6>
+                              <small class="text-muted">@epapunjab</small>
+                            </div>
+                          </div>
+                          <span class="badge bg-label-success status-dot">Live Public</span>
+                        </div>
+                        
+                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                          <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
+                          <h3 class="mb-0 fw-bold text-secondary col-followers-count">1</h3>
+                        </div>
+
+                        <ul class="list-unstyled mb-3">
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="views">
+                            <span class="text-muted small">Post Impressions</span>
+                            <span class="fw-medium small metric-val">120</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="engagement">
+                            <span class="text-muted small">Total Posts</span>
+                            <span class="fw-medium small metric-val">5</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 metric-row" data-metric="new_followers">
+                            <span class="text-muted small">Verified Feed</span>
+                            <span class="fw-medium text-success small metric-val">Active</span>
+                          </li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                          <a href="#platform/x" class="btn btn-xs btn-outline-secondary">View Analytics ↗</a>
+                          <a href="https://x.com/epapunjab" target="_blank" rel="noopener" class="text-muted small">Official Page</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Platform 6: YouTube -->
+                  <div class="col-md-6 col-xl-4">
+                    <div class="card h-100 platform-column border shadow-none hover-shadow cursor-pointer" data-platform="youtube" style="border-top: 4px solid #ef4444 !important;">
+                      <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                          <div class="d-flex align-items-center gap-3">
+                            <div class="avatar avatar-sm">
+                              <span class="avatar-initial rounded bg-label-danger"><i class="bx bxl-youtube"></i></span>
+                            </div>
+                            <div>
+                              <h6 class="mb-0 fw-semibold text-heading">YouTube</h6>
+                              <small class="text-muted">Official Channel</small>
+                            </div>
+                          </div>
+                          <span class="badge bg-label-secondary status-dot">Pending</span>
+                        </div>
+                        
+                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                          <span class="text-muted small d-block mb-1">CHANNEL STATUS</span>
+                          <h3 class="mb-0 fw-bold text-muted col-followers-count">—</h3>
+                        </div>
+
+                        <ul class="list-unstyled mb-3">
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="views">
+                            <span class="text-muted small">Channel Views</span>
+                            <span class="fw-medium small metric-val">—</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 border-bottom metric-row" data-metric="watch_time">
+                            <span class="text-muted small">Watch Time</span>
+                            <span class="fw-medium small metric-val">—</span>
+                          </li>
+                          <li class="d-flex justify-content-between py-1 metric-row" data-metric="engagement">
+                            <span class="text-muted small">Integration</span>
+                            <span class="badge bg-label-secondary fs-tiny metric-val">Pending Launch</span>
+                          </li>
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2">
+                          <a href="#platform/youtube" class="btn btn-xs btn-outline-secondary">Channel Info ↗</a>
+                          <span class="text-muted small">Upcoming</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Row 4: 3-Column Sneat Intelligence Widgets -->
+              <div class="row">
+                
+                <!-- Widget 1: Citizen Interaction Breakdown (Sneat Order Statistics Style) -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                  <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center pb-2">
+                      <div>
+                        <h5 class="card-title mb-0 text-heading">Engagement Breakdown</h5>
+                        <small class="text-muted">Total Interactions: 3,329</small>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex flex-column align-items-start">
+                          <h3 class="mb-0 fw-bold text-heading">3,329</h3>
+                          <small class="text-muted">Total Reactions & Comments</small>
+                        </div>
+                        <div id="engagementDonutChart"></div>
+                      </div>
+                      
+                      <ul class="p-0 m-0 list-unstyled">
+                        <li class="d-flex align-items-center mb-3">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-primary"><i class="bx bxl-facebook"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">Facebook Posts</h6>
+                              <small class="text-muted fs-tiny">Public awareness campaigns</small>
+                            </div>
+                            <span class="fw-semibold small">1,872</span>
+                          </div>
+                        </li>
+
+                        <li class="d-flex align-items-center mb-3">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-danger"><i class="bx bxl-instagram"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">Instagram Reels & Photos</h6>
+                              <small class="text-muted fs-tiny">Field inspections visual media</small>
+                            </div>
+                            <span class="fw-semibold small">1,306</span>
+                          </div>
+                        </li>
+
+                        <li class="d-flex align-items-center mb-3">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-info"><i class="bx bxl-linkedin"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">LinkedIn Updates</h6>
+                              <small class="text-muted fs-tiny">Policy & professional workshops</small>
+                            </div>
+                            <span class="fw-semibold small">142</span>
+                          </div>
+                        </li>
+
+                        <li class="d-flex align-items-center">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-secondary"><i class="bx bxl-twitter"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">X Bulletins & TikTok</h6>
+                              <small class="text-muted fs-tiny">Short advisories & notifications</small>
+                            </div>
+                            <span class="fw-semibold small">9</span>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Widget 2: Environmental Regulatory Campaign Tracker (Sneat Tabbed Card Style) -->
+                <div class="col-md-6 col-lg-4 mb-4">
+                  <div class="card h-100">
+                    <div class="card-header pb-2">
+                      <h5 class="card-title mb-1 text-heading">Regulatory Campaign Outreach</h5>
+                      <small class="text-muted" id="campaignPeriodNote">Active monitoring window: 28 Days</small>
+                    </div>
+                    <div class="card-body">
+                      
+                      <!-- Campaign Item 1: Anti-Smog Crackdowns -->
+                      <div class="mb-3 pb-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="fw-medium small text-heading">Anti-Smog Enforcement Media Drive</span>
+                          <span class="fw-semibold text-primary small">92%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-primary" role="progressbar" style="width: 92%;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted fs-tiny d-block mt-1">185K citizens reached · 45 field bulletins</small>
+                      </div>
+
+                      <!-- Campaign Item 2: Brick Kiln Zig-Zag -->
+                      <div class="mb-3 pb-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="fw-medium small text-heading">Brick Kiln Zig-Zag Conversion</span>
+                          <span class="fw-semibold text-success small">84%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-success" role="progressbar" style="width: 84%;" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted fs-tiny d-block mt-1">320 industrial inspections documented</small>
+                      </div>
+
+                      <!-- Campaign Item 3: Vehicular Smoke Emission -->
+                      <div class="mb-3 pb-2 border-bottom">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="fw-medium small text-heading">Vehicular Smoke Inspections</span>
+                          <span class="fw-semibold text-info small">76%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-info" role="progressbar" style="width: 76%;" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted fs-tiny d-block mt-1">Joint checkpoints across Lahore ring roads</small>
+                      </div>
+
+                      <!-- Campaign Item 4: Citizen AQI Awareness -->
+                      <div>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                          <span class="fw-medium small text-heading">Citizen Air Quality Advisory</span>
+                          <span class="fw-semibold text-warning small">68%</span>
+                        </div>
+                        <div class="progress" style="height: 6px;">
+                          <div class="progress-bar bg-warning" role="progressbar" style="width: 68%;" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted fs-tiny d-block mt-1">Daily advisory bulletins & Hotline 1373 notices</small>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Widget 3: Real-Time Field Dispatches (Sneat Transactions Style) -->
+                <div class="col-md-12 col-lg-4 mb-4">
+                  <div class="card h-100">
+                    <div class="card-header d-flex align-items-center justify-content-between pb-2">
+                      <div>
+                        <h5 class="card-title m-0 text-heading">Operational Dispatches</h5>
+                        <small class="text-muted">Live EPA enforcement feed</small>
+                      </div>
+                      <span class="badge bg-label-success">Verified Feed</span>
+                    </div>
+                    <div class="card-body">
+                      <ul class="p-0 m-0 list-unstyled">
+                        
+                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-error-circle"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">Air Quality Advisory Issued</h6>
+                              <small class="text-muted fs-tiny">Lahore, Sheikhupura & Gujranwala</small>
+                            </div>
+                            <span class="badge bg-label-primary fs-tiny">High Priority</span>
+                          </div>
+                        </li>
+
+                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-check-shield"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">Industrial Units Inspected</h6>
+                              <small class="text-muted fs-tiny">4 non-compliant units sealed</small>
+                            </div>
+                            <span class="badge bg-label-success fs-tiny">Actioned</span>
+                          </div>
+                        </li>
+
+                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-car"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">Vehicle Emissions Squads</h6>
+                              <small class="text-muted fs-tiny">Joint checkposts with Traffic Police</small>
+                            </div>
+                            <span class="badge bg-label-warning fs-tiny">In Progress</span>
+                          </div>
+                        </li>
+
+                        <li class="d-flex align-items-center">
+                          <div class="avatar avatar-sm flex-shrink-0 me-3">
+                            <span class="avatar-initial rounded bg-label-info"><i class="bx bx-broadcast"></i></span>
+                          </div>
+                          <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                            <div>
+                              <h6 class="mb-0 fw-medium small">Public Hotline 1373 Broadcast</h6>
+                              <small class="text-muted fs-tiny">Citizen complaints resolution stream</small>
+                            </div>
+                            <span class="badge bg-label-info fs-tiny">24/7 Active</span>
+                          </div>
+                        </li>
+
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- VIEW 2: Platform Master-Detail View (Managed by PlatformDetailView.js) -->
+            <div id="viewPlatformDetail" class="view-section" style="display: none;"></div>
+
+            <!-- VIEW 3: Admin Portal & Security Gate (Managed by AdminSettingsView.js) -->
+            <div id="viewAdminSettings" class="view-section" style="display: none;"></div>
+
+          </div>
+          <!-- / Content -->
+
+          <!-- Sneat Footer with Official EPA Punjab Metadata -->
+          <footer class="content-footer footer bg-footer-theme border-top">
+            <div class="container-xxl d-flex align-items-center justify-content-between py-3 flex-md-row flex-column">
+              <div class="mb-2 mb-md-0 small text-muted">
+                © 2026 <strong>Environmental Protection Agency (EPA)</strong>, Government of the Punjab. All rights reserved.
+              </div>
+              <div class="d-flex align-items-center gap-3">
+                <a href="https://epd.punjab.gov.pk" target="_blank" rel="noopener" class="footer-link small text-muted">epd.punjab.gov.pk</a>
+                <span class="text-muted">•</span>
+                <span class="badge bg-label-success fs-tiny">OFFICIAL USE ONLY</span>
+              </div>
+            </div>
+          </footer>
+
+          <div class="content-backdrop fade"></div>
+        </div>
+        <!-- / Content wrapper -->
+      </div>
+      <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <!-- / Layout wrapper -->
+
+  <!-- Sneat Core Vendors JS -->
+  <script src="/assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="/assets/vendor/libs/popper/popper.js"></script>
+  <script src="/assets/vendor/js/bootstrap.js"></script>
+  <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="/assets/vendor/js/menu.js"></script>
+
+  <!-- ApexCharts JS -->
+  <script src="/assets/vendor/libs/apex-charts/apexcharts.js"></script>
+
+  <!-- Sneat Main JS -->
+  <script src="/assets/js/main.js"></script>
+
+  <!-- Application Entry Point -->
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
