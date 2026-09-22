@@ -323,8 +323,8 @@ export class AdminSettingsView {
       </div>
     `;
 
-    document.getElementById('btnLogout')?.addEventListener('click', () => {
-      ApiClient.clearToken();
+    document.getElementById('btnLogout')?.addEventListener('click', async () => {
+      await ApiClient.logout();
       state.setCurrentUser(null);
       this.render();
     });

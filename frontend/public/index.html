@@ -223,6 +223,12 @@
                 <span id="adminPortalBtnText" class="small">Admin 🔒</span>
               </button>
 
+              <!-- Sign Out Button -->
+              <button class="btn btn-sm btn-outline-danger d-flex align-items-center px-2 py-1" id="appLogoutBtn" title="Sign out of dashboard session">
+                <i class="bx bx-power-off me-1"></i>
+                <span class="small">Sign Out</span>
+              </button>
+
               <!-- Export / Print Report -->
               <button class="btn btn-sm btn-outline-secondary d-none d-sm-flex align-items-center px-2 py-1" id="printReportBtn" title="Export or print report">
                 <i class="bx bx-printer"></i>
@@ -238,6 +244,9 @@
           <!-- Views Container -->
           <div class="container-xxl flex-grow-1 container-p-y">
             
+            <!-- VIEW 0: Authentication / Login Gate -->
+            <div id="viewLogin" class="view-section" style="display: none;"></div>
+
             <!-- VIEW 1: Main 360° Executive Dashboard -->
             <div id="viewDashboard" class="view-section">
               

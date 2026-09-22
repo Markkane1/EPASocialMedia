@@ -12,6 +12,17 @@ export class ViewRouter {
   handleRoute() {
     const hash = window.location.hash || '#dashboard';
 
+    if (!state.isAuthenticated()) {
+      state.setView('login');
+      return;
+    }
+
+    if (hash === '#login') {
+      state.setView('dashboard');
+      window.location.hash = '#dashboard';
+      return;
+    }
+
     if (hash.startsWith('#platform/')) {
       const platformKey = hash.replace('#platform/', '').trim().toLowerCase();
       state.setView('platform', platformKey);

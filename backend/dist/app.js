@@ -38,22 +38,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createApp = createApp;
 const express_1 = __importDefault(require("express"));
-const cors_1 = __importDefault(require("cors"));
 const path = __importStar(require("path"));
 const requestLogger_1 = require("./interfaces/http/middlewares/requestLogger");
 const errorHandler_1 = require("./interfaces/http/middlewares/errorHandler");
 const apiRouter_1 = require("./interfaces/http/routes/apiRouter");
+const securityHeaders_1 = require("./interfaces/http/middlewares/securityHeaders");
 function createApp() {
     const app = (0, express_1.default)();
-    // Core Middlewares
-    app.use((0, cors_1.default)({
-        origin: '*',
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Content-Type', 'Authorization']
-    }));
+    // 1. Security Headers & Browser Hardening (CSP, nosniff, DENY frame, etc.)
+    app.use(securityHeaders_1.securityHeaders);
+    // 2. Strict Whitelist-Enforced CORS
+    app.use((0, securityHeaders_1.createCorsMiddleware)());
+    // 3. Body Parsing & Logging
     app.use(express_1.default.json());
     app.use(express_1.default.urlencoded({ extended: true }));
     app.use(requestLogger_1.requestLogger);
+    // 4. CSRF Defense for State-Changing Requests
+    app.use(securityHeaders_1.csrfProtection);
     // Mount API Endpoints
     const apiRouter = (0, apiRouter_1.createApiRouter)();
     app.use('/api', apiRouter);

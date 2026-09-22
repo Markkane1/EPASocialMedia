@@ -17,6 +17,20 @@ export const ApiClient = {
     }
   },
 
+  async logout() {
+    try {
+      const headers = this.getAuthHeaders();
+      await fetch(`${BASE_URL}/api/auth/logout`, {
+        method: 'POST',
+        headers
+      });
+    } catch (e) {
+      console.warn('[AUTH] Server logout error, clearing local token:', e);
+    } finally {
+      this.clearToken();
+    }
+  },
+
   clearToken() {
     localStorage.removeItem('epa_auth_token');
     sessionStorage.removeItem('epa_auth_token');
@@ -51,6 +65,18 @@ export const ApiClient = {
     return data;
   },
 
+  async changePassword(currentPassword, newPassword) {
+    const res = await fetch(`${BASE_URL}/api/auth/change-password`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Password update failed');
+    return data;
+  },
+
+
   async getMe() {
     const res = await fetch(`${BASE_URL}/api/auth/me`, {
       headers: this.getAuthHeaders()
@@ -73,7 +99,13 @@ export const ApiClient = {
     }
 
     url += `?${params.toString()}`;
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: this.getAuthHeaders()
+    });
+    if (res.status === 401) {
+      this.clearToken();
+      throw new Error('UNAUTHORIZED');
+    }
     if (!res.ok) throw new Error(`Failed to load metrics: ${res.statusText}`);
     return await res.json();
   },
@@ -84,6 +116,10 @@ export const ApiClient = {
       headers: this.getAuthHeaders(),
       body: JSON.stringify({})
     });
+    if (res.status === 401) {
+      this.clearToken();
+      throw new Error('UNAUTHORIZED');
+    }
     if (!res.ok) throw new Error(`Sync failed: ${res.statusText}`);
     return await res.json();
   },

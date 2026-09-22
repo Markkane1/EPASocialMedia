@@ -22,10 +22,38 @@ import { ConfigController } from '../controllers/ConfigController';
 import { HealthController } from '../controllers/HealthController';
 import { AuthController } from '../controllers/AuthController';
 
-import { authenticateToken, requireRole } from '../middlewares/authGuard';
+import { requireAuth, requirePermission } from '../middlewares/authGuard';
+import { validateBody, validateQuery } from '../middlewares/validateRequest';
+import {
+  LoginSchema,
+  MetricsQuerySchema,
+  UpdateConfigSchema,
+  TestConnectionSchema,
+  ChangePasswordSchema
+} from '../validation/schemas';
+import { RateLimiter } from '../../../infrastructure/security/RateLimiter';
 
 export function createApiRouter(): Router {
   const router = Router();
+
+  // Rate Limiters
+  const authLimiter = RateLimiter.create({
+    windowMs: 60 * 1000,
+    max: 10,
+    message: 'Too many authentication attempts.'
+  });
+
+  const syncLimiter = RateLimiter.create({
+    windowMs: 2 * 60 * 1000,
+    max: 5,
+    message: 'Too many synchronization requests.'
+  });
+
+  const configLimiter = RateLimiter.create({
+    windowMs: 60 * 1000,
+    max: 20,
+    message: 'Too many configuration updates.'
+  });
 
   // 1. Repositories & Fetchers (Infrastructure)
   const metricsRepo = new PrismaMetricsRepository();
@@ -55,20 +83,79 @@ export function createApiRouter(): Router {
   const healthController = new HealthController();
   const authController = new AuthController(authUseCase);
 
-  // 4. Public Routes
+  // 4. Public Health & Diagnostic Routes
   router.get('/status', (req, res) => healthController.getStatus(req, res));
   router.get('/health', (req, res) => healthController.getStatus(req, res));
-  router.get('/metrics', (req, res, next) => metricsController.getMetrics(req, res, next));
-  router.post('/sync', (req, res, next) => syncController.syncAll(req, res, next));
 
   // 5. Authentication Routes
-  router.post('/auth/login', (req, res) => authController.login(req, res));
-  router.get('/auth/me', authenticateToken, (req, res) => authController.getMe(req, res));
+  router.post('/auth/login', authLimiter, validateBody(LoginSchema), (req, res) => authController.login(req, res));
+  router.get('/auth/me', requireAuth, (req, res) => authController.getMe(req, res));
+  router.post('/auth/logout', requireAuth, (req, res) => authController.logout(req, res));
+  router.post('/auth/change-password', requireAuth, authLimiter, validateBody(ChangePasswordSchema), (req, res) =>
+    authController.changePassword(req, res)
+  );
 
-  // 6. Role-Based Protected Routes (Admin Only)
-  router.get('/config', authenticateToken, requireRole('ADMIN'), (req, res, next) => configController.getConfig(req, res, next));
-  router.post('/config', authenticateToken, requireRole('ADMIN'), (req, res, next) => configController.updateConfig(req, res, next));
-  router.post('/test-connection', authenticateToken, requireRole('ADMIN'), (req, res, next) => configController.testConnection(req, res, next));
+  // 6. Protected Operational Routes (Authentication & Permission Required)
+  router.get(
+    '/metrics',
+    requireAuth,
+    requirePermission('VIEW_METRICS'),
+    validateQuery(MetricsQuerySchema),
+    (req, res, next) => metricsController.getMetrics(req, res, next)
+  );
+  router.post(
+    '/sync',
+    requireAuth,
+    requirePermission('TRIGGER_SYNC'),
+    syncLimiter,
+    (req, res, next) => syncController.syncAll(req, res, next)
+  );
+
+  // 7. Role-Based Protected Routes (Admin Permissions Only)
+  router.get(
+    '/config',
+    requireAuth,
+    requirePermission('MANAGE_CONFIG'),
+    (req, res, next) => configController.getConfig(req, res, next)
+  );
+  router.post(
+    '/config',
+    requireAuth,
+    requirePermission('MANAGE_CONFIG'),
+    configLimiter,
+    validateBody(UpdateConfigSchema),
+    (req, res, next) => configController.updateConfig(req, res, next)
+  );
+  router.post(
+    '/test-connection',
+    requireAuth,
+    requirePermission('TEST_CONNECTION'),
+    configLimiter,
+    validateBody(TestConnectionSchema),
+    (req, res, next) => configController.testConnection(req, res, next)
+  );
+
+  // 8. Audit Trail & Security Events (Admin Only)
+  router.get(
+    '/audit-logs',
+    requireAuth,
+    requirePermission('MANAGE_CONFIG'),
+    (req, res) => authController.getAuditLogs(req, res)
+  );
+
+  // 9. User & Administrative Management Guardrails (Admin Only)
+  router.get(
+    '/users',
+    requireAuth,
+    requirePermission('MANAGE_USERS'),
+    (req, res) => authController.listUsers(req, res)
+  );
+  router.post(
+    '/users/:username/status',
+    requireAuth,
+    requirePermission('MANAGE_USERS'),
+    (req, res) => authController.setUserStatus(req, res)
+  );
 
   return router;
 }

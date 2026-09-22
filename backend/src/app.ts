@@ -5,18 +5,28 @@ import { requestLogger } from './interfaces/http/middlewares/requestLogger';
 import { errorHandler } from './interfaces/http/middlewares/errorHandler';
 import { createApiRouter } from './interfaces/http/routes/apiRouter';
 
+import {
+  securityHeaders,
+  createCorsMiddleware,
+  csrfProtection
+} from './interfaces/http/middlewares/securityHeaders';
+
 export function createApp(): Express {
   const app = express();
 
-  // Core Middlewares
-  app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+  // 1. Security Headers & Browser Hardening (CSP, nosniff, DENY frame, etc.)
+  app.use(securityHeaders);
+
+  // 2. Strict Whitelist-Enforced CORS
+  app.use(createCorsMiddleware());
+
+  // 3. Body Parsing & Logging
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(requestLogger);
+
+  // 4. CSRF Defense for State-Changing Requests
+  app.use(csrfProtection);
 
   // Mount API Endpoints
   const apiRouter = createApiRouter();

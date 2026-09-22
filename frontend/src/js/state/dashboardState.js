@@ -69,6 +69,10 @@ class DashboardState {
     this.notify('AUTH_CHANGED', user);
   }
 
+  isAuthenticated() {
+    return !!this.currentUser;
+  }
+
   isAdmin() {
     return this.currentUser?.role === 'ADMIN';
   }

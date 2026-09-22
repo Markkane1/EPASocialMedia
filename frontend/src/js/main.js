@@ -7,6 +7,7 @@ import { PlatformColumnsComponent } from './components/PlatformColumns.js';
 import { OperationalWidgetsComponent } from './components/OperationalWidgets.js';
 import { PlatformDetailView } from './components/PlatformDetailView.js';
 import { AdminSettingsView } from './components/AdminSettingsView.js';
+import { LoginView } from './components/LoginView.js';
 import { ViewRouter } from './router/viewRouter.js';
 import {
   initScrollReveal,
@@ -27,14 +28,39 @@ document.addEventListener('DOMContentLoaded', async () => {
   const operationalWidgets = new OperationalWidgetsComponent();
   const platformDetailView = new PlatformDetailView();
   const adminSettingsView  = new AdminSettingsView();
+  const loginView          = new LoginView();
   const router             = new ViewRouter();
 
-  // View containers
-  const viewDashboard     = document.getElementById('viewDashboard');
+  // View containers & layout elements
+  const viewLogin          = document.getElementById('viewLogin');
+  const viewDashboard      = document.getElementById('viewDashboard');
   const viewPlatformDetail = document.getElementById('viewPlatformDetail');
-  const viewAdminSettings = document.getElementById('viewAdminSettings');
+  const viewAdminSettings  = document.getElementById('viewAdminSettings');
+  const layoutMenu         = document.getElementById('layout-menu');
+  const layoutNavbar       = document.getElementById('layout-navbar');
+  const appLogoutBtn       = document.getElementById('appLogoutBtn');
+
+  appLogoutBtn?.addEventListener('click', async () => {
+    await ApiClient.logout();
+    state.setCurrentUser(null);
+    state.setView('login');
+  });
 
   function updateViewVisibility(view) {
+    if (view === 'login') {
+      if (viewLogin)          viewLogin.style.display          = 'block';
+      if (viewDashboard)      viewDashboard.style.display      = 'none';
+      if (viewPlatformDetail) viewPlatformDetail.style.display = 'none';
+      if (viewAdminSettings)  viewAdminSettings.style.display  = 'none';
+      if (layoutMenu)         layoutMenu.style.display         = 'none';
+      if (layoutNavbar)       layoutNavbar.style.display       = 'none';
+      loginView.render();
+      return;
+    }
+
+    if (layoutMenu)         layoutMenu.style.display         = '';
+    if (layoutNavbar)       layoutNavbar.style.display       = '';
+    if (viewLogin)          viewLogin.style.display          = 'none';
     if (viewDashboard)      viewDashboard.style.display      = view === 'dashboard' ? 'block' : 'none';
     if (viewPlatformDetail) viewPlatformDetail.style.display = view === 'platform'  ? 'block' : 'none';
     if (viewAdminSettings)  viewAdminSettings.style.display  = view === 'settings'  ? 'block' : 'none';
@@ -46,10 +72,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Re-trigger entrance animations when returning to dashboard
     if (view === 'dashboard') {
-      // Re-run scroll reveal: resets .in-view and re-observes every .animate-row
-      // so animations replay every time the user navigates back to the dashboard
       setTimeout(() => {
-        initScrollReveal();      // resets + re-observes (includes counter trigger on enter)
+        initScrollReveal();
         initLivePulse();
       }, 60);
 
@@ -70,29 +94,36 @@ document.addEventListener('DOMContentLoaded', async () => {
       operationalWidgets.render(data);
     } else if (eventType === 'AUTH_CHANGED') {
       updateAdminButtonState(state.isAdmin());
+      if (!state.isAuthenticated()) {
+        updateViewVisibility('login');
+      }
     }
   });
 
   // Verify existing auth session
   try {
     const me = await ApiClient.getMe();
-    if (me.user) {
+    if (me && me.user) {
       state.setCurrentUser(me.user);
       updateAdminButtonState(state.isAdmin());
+
+      // Authenticated initial data load
+      try {
+        const data = await ApiClient.getMetrics({ period: '28d' });
+        state.setMetricsData(data);
+      } catch (metricsErr) {
+        console.error('[DASHBOARD] Error loading initial metrics:', metricsErr);
+      }
+    } else {
+      ApiClient.clearToken();
+      state.setCurrentUser(null);
     }
   } catch {
     ApiClient.clearToken();
+    state.setCurrentUser(null);
   }
 
-  // Initial Data Load
-  try {
-    const data = await ApiClient.getMetrics({ period: '28d' });
-    state.setMetricsData(data);
-  } catch (err) {
-    console.error('[DASHBOARD] Error loading initial metrics:', err);
-  }
-
-  // Initialize router (triggers initial view)
+  // Initialize router (triggers initial view based on auth state)
   router.init();
 
   // Boot animation passes — slight delay so DOM is ready

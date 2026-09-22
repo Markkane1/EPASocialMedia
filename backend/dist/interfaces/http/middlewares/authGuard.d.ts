@@ -9,4 +9,6 @@ declare global {
     }
 }
 export declare function authenticateToken(req: Request, res: Response, next: NextFunction): void;
+export declare const requireAuth: typeof authenticateToken;
 export declare function requireRole(requiredRole: UserRoleType): (req: Request, res: Response, next: NextFunction) => void;
+export declare function requirePermission(requiredPermission: import('../../../infrastructure/auth/Permissions').Permission): (req: Request, res: Response, next: NextFunction) => void;

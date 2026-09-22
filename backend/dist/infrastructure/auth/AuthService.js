@@ -36,7 +36,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const crypto = __importStar(require("crypto"));
 class AuthService {
-    static SECRET = process.env.JWT_SECRET || 'EPA_PUNJAB_SECURE_AUTH_SECRET_2026_KEY_#$';
+    static getSecret() {
+        const secret = process.env.JWT_SECRET;
+        if (process.env.NODE_ENV === 'production') {
+            if (!secret || secret.length < 32 || secret.includes('EPA_PUNJAB_SECURE_AUTH_SECRET_2026')) {
+                throw new Error('[FATAL SECURITY CONFIG ERROR] In production, JWT_SECRET must be set as an environment variable with at least 32 characters. Refusing to run with default secret.');
+            }
+            return secret;
+        }
+        return secret || 'EPA_PUNJAB_SECURE_DEV_AUTH_SECRET_2026_KEY_#$';
+    }
     static hashPassword(password) {
         const salt = crypto.randomBytes(16).toString('hex');
         const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
@@ -50,14 +59,17 @@ class AuthService {
         const computedHash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
         return crypto.timingSafeEqual(Buffer.from(originalHash, 'hex'), Buffer.from(computedHash, 'hex'));
     }
-    static createToken(payload, expiresInHours = 24) {
+    static createToken(payload, expiresInHours = 8) {
+        const now = Date.now();
         const fullPayload = {
             ...payload,
-            exp: Date.now() + expiresInHours * 3600 * 1000
+            iat: payload.iat || now,
+            exp: now + expiresInHours * 3600 * 1000
         };
         const payloadB64 = Buffer.from(JSON.stringify(fullPayload)).toString('base64url');
+        const secret = this.getSecret();
         const signature = crypto
-            .createHmac('sha256', this.SECRET)
+            .createHmac('sha256', secret)
             .update(payloadB64)
             .digest('base64url');
         return `${payloadB64}.${signature}`;
@@ -68,8 +80,9 @@ class AuthService {
             if (parts.length !== 2)
                 return null;
             const [payloadB64, signature] = parts;
+            const secret = this.getSecret();
             const expectedSignature = crypto
-                .createHmac('sha256', this.SECRET)
+                .createHmac('sha256', secret)
                 .update(payloadB64)
                 .digest('base64url');
             if (!crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature))) {

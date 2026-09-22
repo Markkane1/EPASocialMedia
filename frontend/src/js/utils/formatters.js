@@ -26,3 +26,14 @@ export function formatPercentage(part, total) {
   if (!total || total === 0) return '0%';
   return ((part / total) * 100).toFixed(1) + '%';
 }
+
+export function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+

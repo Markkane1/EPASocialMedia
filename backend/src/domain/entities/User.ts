@@ -6,6 +6,7 @@ export interface UserProps {
   passwordHash: string;
   fullName: string;
   role: UserRoleType;
+  isActive?: boolean;
   createdAt?: string;
 }
 
@@ -15,6 +16,7 @@ export class User {
   public readonly passwordHash: string;
   public readonly fullName: string;
   public readonly role: UserRoleType;
+  public readonly isActive: boolean;
   public readonly createdAt: string;
 
   constructor(props: UserProps) {
@@ -23,11 +25,36 @@ export class User {
     this.passwordHash = props.passwordHash;
     this.fullName = props.fullName;
     this.role = props.role;
+    this.isActive = props.isActive !== undefined ? props.isActive : true;
     this.createdAt = props.createdAt || new Date().toISOString();
   }
 
   public isAdmin(): boolean {
     return this.role === 'ADMIN';
+  }
+
+  public withPasswordHash(newHash: string): User {
+    return new User({
+      id: this.id,
+      username: this.username,
+      passwordHash: newHash,
+      fullName: this.fullName,
+      role: this.role,
+      isActive: this.isActive,
+      createdAt: this.createdAt
+    });
+  }
+
+  public withActiveStatus(isActive: boolean): User {
+    return new User({
+      id: this.id,
+      username: this.username,
+      passwordHash: this.passwordHash,
+      fullName: this.fullName,
+      role: this.role,
+      isActive,
+      createdAt: this.createdAt
+    });
   }
 
   public toJSON() {
@@ -36,6 +63,7 @@ export class User {
       username: this.username,
       fullName: this.fullName,
       role: this.role,
+      isActive: this.isActive,
       createdAt: this.createdAt
     };
   }

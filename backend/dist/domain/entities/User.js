@@ -7,6 +7,7 @@ class User {
     passwordHash;
     fullName;
     role;
+    isActive;
     createdAt;
     constructor(props) {
         this.id = props.id;
@@ -14,10 +15,33 @@ class User {
         this.passwordHash = props.passwordHash;
         this.fullName = props.fullName;
         this.role = props.role;
+        this.isActive = props.isActive !== undefined ? props.isActive : true;
         this.createdAt = props.createdAt || new Date().toISOString();
     }
     isAdmin() {
         return this.role === 'ADMIN';
+    }
+    withPasswordHash(newHash) {
+        return new User({
+            id: this.id,
+            username: this.username,
+            passwordHash: newHash,
+            fullName: this.fullName,
+            role: this.role,
+            isActive: this.isActive,
+            createdAt: this.createdAt
+        });
+    }
+    withActiveStatus(isActive) {
+        return new User({
+            id: this.id,
+            username: this.username,
+            passwordHash: this.passwordHash,
+            fullName: this.fullName,
+            role: this.role,
+            isActive,
+            createdAt: this.createdAt
+        });
     }
     toJSON() {
         return {
@@ -25,6 +49,7 @@ class User {
             username: this.username,
             fullName: this.fullName,
             role: this.role,
+            isActive: this.isActive,
             createdAt: this.createdAt
         };
     }

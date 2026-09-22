@@ -5,6 +5,7 @@ export interface UserProps {
     passwordHash: string;
     fullName: string;
     role: UserRoleType;
+    isActive?: boolean;
     createdAt?: string;
 }
 export declare class User {
@@ -13,14 +14,18 @@ export declare class User {
     readonly passwordHash: string;
     readonly fullName: string;
     readonly role: UserRoleType;
+    readonly isActive: boolean;
     readonly createdAt: string;
     constructor(props: UserProps);
     isAdmin(): boolean;
+    withPasswordHash(newHash: string): User;
+    withActiveStatus(isActive: boolean): User;
     toJSON(): {
         id: string | undefined;
         username: string;
         fullName: string;
         role: UserRoleType;
+        isActive: boolean;
         createdAt: string;
     };
 }
