@@ -189,16 +189,16 @@
             <div class="navbar-nav align-items-center gap-2 flex-row flex-shrink-0">
               
               <!-- Dynamic Date Range Filter -->
-              <div class="d-none d-lg-flex align-items-center gap-1 bg-body-tertiary px-2 py-1 rounded border">
+              <div class="d-none d-lg-flex align-items-center gap-1 navbar-date-picker-box">
                 <div class="d-flex align-items-center gap-1">
-                  <small class="text-muted fs-tiny">From:</small>
-                  <input type="date" id="filterDateFrom" class="form-control form-control-sm border-0 bg-transparent p-0" style="width: 96px; font-size: 0.78rem;" />
+                  <small class="text-muted fs-tiny fw-medium">From:</small>
+                  <input type="date" id="filterDateFrom" class="form-control form-control-sm border-0 bg-transparent p-0" style="width: 122px; font-size: 0.78rem;" />
                 </div>
-                <div class="d-flex align-items-center gap-1">
-                  <small class="text-muted fs-tiny">To:</small>
-                  <input type="date" id="filterDateTo" class="form-control form-control-sm border-0 bg-transparent p-0" style="width: 96px; font-size: 0.78rem;" />
+                <div class="d-flex align-items-center gap-1 ms-1">
+                  <small class="text-muted fs-tiny fw-medium">To:</small>
+                  <input type="date" id="filterDateTo" class="form-control form-control-sm border-0 bg-transparent p-0" style="width: 122px; font-size: 0.78rem;" />
                 </div>
-                <button class="btn btn-xs btn-primary px-2" id="btnApplyDate" title="Apply custom date range">
+                <button class="btn btn-xs btn-primary px-2 ms-1" id="btnApplyDate" title="Apply custom date range">
                   Apply
                 </button>
               </div>
@@ -241,128 +241,81 @@
             <!-- VIEW 1: Main 360° Executive Dashboard -->
             <div id="viewDashboard" class="view-section">
               
-              <!-- Row 1: Executive Welcome Briefing (8 cols) + 4 Core Stat Cards (4 cols, 2x2) -->
-              <div class="row">
+              <!-- Row 1: 4 Core Executive KPI Cards (Full Width 12 cols) -->
+              <div class="row animate-row">
                 
-                <!-- Welcome & Situational Awareness Card (Sneat Hero Style) -->
-                <div class="col-xxl-8 col-lg-7 mb-4">
-                  <div class="card h-100 position-relative overflow-hidden">
-                    <div class="d-flex align-items-start row h-100">
-                      <div class="col-sm-7 col-12">
-                        <div class="card-body pb-0 pb-sm-4">
-                          <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-label-success">
-                              <i class="bx bx-check-circle me-1"></i> EPA Punjab Official Intelligence
-                            </span>
-                            <span class="badge bg-label-primary" id="heroPeriodTag">
-                              Active Reporting Window
-                            </span>
-                          </div>
-                          <h4 class="card-title text-heading fw-bold mb-2">Social Media Operations 360°</h4>
-                          <p class="mb-4 text-muted">
-                            Unified public awareness metrics, anti-smog campaign reach, and citizen interaction streams across all official channels.
-                          </p>
-                          <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
-                            <a href="#platform/facebook" class="btn btn-sm btn-primary">
-                              <i class="bx bx-search-alt me-1"></i> Channel Breakdown
-                            </a>
-                            <a href="#settings" class="btn btn-sm btn-outline-secondary">
-                              <i class="bx bx-cog me-1"></i> API Configuration
-                            </a>
-                          </div>
+                <!-- Stat 1: Total Audience -->
+                <div class="col-sm-6 col-xl-3 mb-4">
+                  <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="avatar flex-shrink-0">
+                          <img src="/assets/img/icons/unicons/chart-success.png" alt="audience" class="rounded" />
                         </div>
+                        <span class="badge bg-label-success d-flex align-items-center"><i class="bx bx-up-arrow-alt me-1"></i>+12.4%</span>
                       </div>
-                      <div class="col-sm-5 col-12 text-center text-sm-end pe-sm-4 d-none d-sm-block">
-                        <div class="card-body pb-0 px-0 px-md-4">
-                          <img
-                            src="/assets/img/illustrations/man-with-laptop.png"
-                            height="160"
-                            alt="Executive Overview" />
-                        </div>
-                      </div>
+                      <p class="mb-1 text-muted small fw-medium text-uppercase">Total Audience</p>
+                      <h3 class="card-title mb-1 fw-bold text-heading" id="kpiTotalFollowers">29,782</h3>
+                      <small class="text-muted">Verified citizens across channels</small>
                     </div>
                   </div>
                 </div>
 
-                <!-- 4 Sneat Quick Stat Cards (2x2 Grid) -->
-                <div class="col-xxl-4 col-lg-5 mb-4">
-                  <div class="row g-3 h-100">
-                    
-                    <!-- Stat 1: Total Audience -->
-                    <div class="col-6">
-                      <div class="card h-100">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="avatar avatar-sm flex-shrink-0">
-                              <img src="/assets/img/icons/unicons/chart-success.png" alt="audience" class="rounded" />
-                            </div>
-                            <span class="badge bg-label-success fs-tiny">+12.4%</span>
-                          </div>
-                          <p class="mb-1 text-muted small">Total Audience</p>
-                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiTotalFollowers">29,773</h4>
-                          <small class="text-muted fs-tiny">Followers across channels</small>
+                <!-- Stat 2: Content Views -->
+                <div class="col-sm-6 col-xl-3 mb-4">
+                  <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="avatar flex-shrink-0">
+                          <img src="/assets/img/icons/unicons/wallet-info.png" alt="views" class="rounded" />
                         </div>
+                        <span class="badge bg-label-info d-flex align-items-center"><i class="bx bx-up-arrow-alt me-1"></i>+18.2%</span>
                       </div>
+                      <p class="mb-1 text-muted small fw-medium text-uppercase">Content Views</p>
+                      <h3 class="card-title mb-1 fw-bold text-heading" id="kpiContentViews">1,864,561</h3>
+                      <small class="text-muted">Total impressions in period</small>
                     </div>
+                  </div>
+                </div>
 
-                    <!-- Stat 2: Content Views -->
-                    <div class="col-6">
-                      <div class="card h-100">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="avatar avatar-sm flex-shrink-0">
-                              <img src="/assets/img/icons/unicons/wallet-info.png" alt="views" class="rounded" />
-                            </div>
-                            <span class="badge bg-label-info fs-tiny">+18.2%</span>
-                          </div>
-                          <p class="mb-1 text-muted small">Content Views</p>
-                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiContentViews">226,120</h4>
-                          <small class="text-muted fs-tiny">Total impressions in period</small>
+                <!-- Stat 3: Citizen Engagements -->
+                <div class="col-sm-6 col-xl-3 mb-4">
+                  <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="avatar flex-shrink-0">
+                          <img src="/assets/img/icons/unicons/cc-primary.png" alt="engagements" class="rounded" />
                         </div>
+                        <span class="badge bg-label-success d-flex align-items-center"><i class="bx bx-up-arrow-alt me-1"></i>+10.5%</span>
                       </div>
+                      <p class="mb-1 text-muted small fw-medium text-uppercase">Citizen Engagements</p>
+                      <h3 class="card-title mb-1 fw-bold text-heading" id="kpiEngagement">10,811</h3>
+                      <small class="text-muted">Likes, shares & comments</small>
                     </div>
+                  </div>
+                </div>
 
-                    <!-- Stat 3: Citizen Engagements -->
-                    <div class="col-6">
-                      <div class="card h-100">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="avatar avatar-sm flex-shrink-0">
-                              <img src="/assets/img/icons/unicons/cc-primary.png" alt="engagements" class="rounded" />
-                            </div>
-                            <span class="badge bg-label-success fs-tiny">+8.5%</span>
-                          </div>
-                          <p class="mb-1 text-muted small">Engagements</p>
-                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiEngagement">3,329</h4>
-                          <small class="text-muted fs-tiny">Reactions & comments</small>
+                <!-- Stat 4: Watch Time & Growth -->
+                <div class="col-sm-6 col-xl-3 mb-4">
+                  <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                      <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="avatar flex-shrink-0">
+                          <img src="/assets/img/icons/unicons/paypal.png" alt="growth" class="rounded" />
                         </div>
+                        <span class="badge bg-label-warning" id="kpiNewFollowers">+1,900</span>
                       </div>
+                      <p class="mb-1 text-muted small fw-medium text-uppercase">Watch Time & Inflow</p>
+                      <h3 class="card-title mb-1 fw-bold text-heading" id="kpiWatchTime">—</h3>
+                      <small class="text-muted">Broadcast watch & new citizens</small>
                     </div>
-
-                    <!-- Stat 4: Watch Time -->
-                    <div class="col-6">
-                      <div class="card h-100">
-                        <div class="card-body p-3">
-                          <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="avatar avatar-sm flex-shrink-0">
-                              <img src="/assets/img/icons/unicons/paypal.png" alt="watch time" class="rounded" />
-                            </div>
-                            <span class="badge bg-label-warning fs-tiny" id="kpiNewFollowers">+524</span>
-                          </div>
-                          <p class="mb-1 text-muted small">Watch Time (Hrs)</p>
-                          <h4 class="card-title mb-0 fw-bold text-heading" id="kpiWatchTime">—</h4>
-                          <small class="text-muted fs-tiny">Broadcast duration</small>
-                        </div>
-                      </div>
-                    </div>
-
                   </div>
                 </div>
 
               </div>
 
               <!-- Row 2: 360° Comparative Analytics & Channel Share (ApexCharts) -->
-              <div class="row mb-4">
+              <div class="row mb-4 animate-row">
                 
                 <!-- Left (8 cols): Comparative Performance Multi-Bar Chart -->
                 <div class="col-12 col-xl-8 mb-4 mb-xl-0">
@@ -392,36 +345,9 @@
                     <div class="card-body d-flex flex-column align-items-center justify-content-center py-2">
                       <div id="audienceShareDonutChart" class="my-2"></div>
                       
-                      <!-- Legend List -->
-                      <div class="w-100 pt-2 border-top">
-                        <div class="d-flex justify-content-between align-items-center py-1">
-                          <span class="d-flex align-items-center small">
-                            <span class="badge rounded-circle p-1 me-2" style="background-color: #1877f2;"> </span>
-                            Facebook
-                          </span>
-                          <span class="fw-semibold small">26,409 (88.7%)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center py-1">
-                          <span class="d-flex align-items-center small">
-                            <span class="badge rounded-circle p-1 me-2" style="background-color: #e1306c;"> </span>
-                            Instagram
-                          </span>
-                          <span class="fw-semibold small">2,754 (9.2%)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center py-1">
-                          <span class="d-flex align-items-center small">
-                            <span class="badge rounded-circle p-1 me-2" style="background-color: #0077b5;"> </span>
-                            LinkedIn
-                          </span>
-                          <span class="fw-semibold small">609 (2.0%)</span>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center py-1">
-                          <span class="d-flex align-items-center small">
-                            <span class="badge rounded-circle p-1 me-2" style="background-color: #696cff;"> </span>
-                            TikTok & X
-                          </span>
-                          <span class="fw-semibold small">6 (<0.1%)</span>
-                        </div>
+                      <!-- Legend List — populated dynamically by OverviewCharts.js -->
+                      <div class="w-100 pt-2 border-top" id="donutLegendList">
+                        <!-- Rows injected by JS -->
                       </div>
                     </div>
                   </div>
@@ -439,7 +365,7 @@
                   <span class="badge bg-label-info">6 Integrated Platforms</span>
                 </div>
 
-                <div class="row g-4" id="sectionPlatformGrid">
+                <div class="row g-4 animate-row" id="sectionPlatformGrid">
                   
                   <!-- Platform 1: Facebook -->
                   <div class="col-md-6 col-xl-4">
@@ -458,7 +384,7 @@
                           <span class="badge bg-label-success status-dot">Live Public</span>
                         </div>
                         
-                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                        <div class="p-3 platform-metric-box rounded mb-3">
                           <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
                           <h3 class="mb-0 fw-bold text-primary col-followers-count">26,409</h3>
                         </div>
@@ -503,7 +429,7 @@
                           <span class="badge bg-label-success status-dot">Live Public</span>
                         </div>
                         
-                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                        <div class="p-3 platform-metric-box rounded mb-3">
                           <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
                           <h3 class="mb-0 fw-bold text-danger col-followers-count">2,754</h3>
                         </div>
@@ -548,7 +474,7 @@
                           <span class="badge bg-label-success status-dot">Live Public</span>
                         </div>
                         
-                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                        <div class="p-3 platform-metric-box rounded mb-3">
                           <span class="text-muted small d-block mb-1">TOTAL VIDEOS PUBLISHED</span>
                           <h3 class="mb-0 fw-bold text-dark col-followers-count">5 Videos</h3>
                         </div>
@@ -593,7 +519,7 @@
                           <span class="badge bg-label-success status-dot">Live Public</span>
                         </div>
                         
-                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                        <div class="p-3 platform-metric-box rounded mb-3">
                           <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
                           <h3 class="mb-0 fw-bold text-info col-followers-count">609</h3>
                         </div>
@@ -638,7 +564,7 @@
                           <span class="badge bg-label-success status-dot">Live Public</span>
                         </div>
                         
-                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                        <div class="p-3 platform-metric-box rounded mb-3">
                           <span class="text-muted small d-block mb-1">AUDIENCE / FOLLOWERS</span>
                           <h3 class="mb-0 fw-bold text-secondary col-followers-count">1</h3>
                         </div>
@@ -683,7 +609,7 @@
                           <span class="badge bg-label-secondary status-dot">Pending</span>
                         </div>
                         
-                        <div class="p-3 bg-body-tertiary rounded mb-3">
+                        <div class="p-3 platform-metric-box rounded mb-3">
                           <span class="text-muted small d-block mb-1">CHANNEL STATUS</span>
                           <h3 class="mb-0 fw-bold text-muted col-followers-count">—</h3>
                         </div>
@@ -715,28 +641,28 @@
               </div>
 
               <!-- Row 4: 3-Column Sneat Intelligence Widgets -->
-              <div class="row">
+              <div class="row animate-row">
                 
-                <!-- Widget 1: Citizen Interaction Breakdown (Sneat Order Statistics Style) -->
+                <!-- Widget 1: Citizen Interaction Breakdown -->
                 <div class="col-md-6 col-lg-4 mb-4">
                   <div class="card h-100">
                     <div class="card-header d-flex justify-content-between align-items-center pb-2">
                       <div>
                         <h5 class="card-title mb-0 text-heading">Engagement Breakdown</h5>
-                        <small class="text-muted">Total Interactions: 3,329</small>
+                        <small class="text-muted">Total Interactions: <span id="engagementTotalCounter">3,329</span></small>
                       </div>
                     </div>
                     <div class="card-body">
                       <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex flex-column align-items-start">
-                          <h3 class="mb-0 fw-bold text-heading">3,329</h3>
-                          <small class="text-muted">Total Reactions & Comments</small>
+                          <h3 class="mb-0 fw-bold text-heading kpi-counter" id="engagementTotalCounterLarge">3,329</h3>
+                          <small class="text-muted">Total Reactions &amp; Comments</small>
                         </div>
                         <div id="engagementDonutChart"></div>
                       </div>
                       
                       <ul class="p-0 m-0 list-unstyled">
-                        <li class="d-flex align-items-center mb-3">
+                        <li class="d-flex align-items-center mb-3 engagement-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-primary"><i class="bx bxl-facebook"></i></span>
                           </div>
@@ -745,46 +671,46 @@
                               <h6 class="mb-0 fw-medium small">Facebook Posts</h6>
                               <small class="text-muted fs-tiny">Public awareness campaigns</small>
                             </div>
-                            <span class="fw-semibold small">1,872</span>
+                            <span class="fw-semibold small engagement-count" id="engCountFacebook">1,872</span>
                           </div>
                         </li>
 
-                        <li class="d-flex align-items-center mb-3">
+                        <li class="d-flex align-items-center mb-3 engagement-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-danger"><i class="bx bxl-instagram"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
-                              <h6 class="mb-0 fw-medium small">Instagram Reels & Photos</h6>
+                              <h6 class="mb-0 fw-medium small">Instagram Reels &amp; Photos</h6>
                               <small class="text-muted fs-tiny">Field inspections visual media</small>
                             </div>
-                            <span class="fw-semibold small">1,306</span>
+                            <span class="fw-semibold small engagement-count" id="engCountInstagram">1,306</span>
                           </div>
                         </li>
 
-                        <li class="d-flex align-items-center mb-3">
+                        <li class="d-flex align-items-center mb-3 engagement-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-info"><i class="bx bxl-linkedin"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
                               <h6 class="mb-0 fw-medium small">LinkedIn Updates</h6>
-                              <small class="text-muted fs-tiny">Policy & professional workshops</small>
+                              <small class="text-muted fs-tiny">Policy &amp; professional workshops</small>
                             </div>
-                            <span class="fw-semibold small">142</span>
+                            <span class="fw-semibold small engagement-count" id="engCountLinkedIn">142</span>
                           </div>
                         </li>
 
-                        <li class="d-flex align-items-center">
+                        <li class="d-flex align-items-center engagement-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
                             <span class="avatar-initial rounded bg-label-secondary"><i class="bx bxl-twitter"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
-                              <h6 class="mb-0 fw-medium small">X Bulletins & TikTok</h6>
-                              <small class="text-muted fs-tiny">Short advisories & notifications</small>
+                              <h6 class="mb-0 fw-medium small">X Bulletins &amp; TikTok</h6>
+                              <small class="text-muted fs-tiny">Short advisories &amp; notifications</small>
                             </div>
-                            <span class="fw-semibold small">9</span>
+                            <span class="fw-semibold small engagement-count" id="engCountOther">9</span>
                           </div>
                         </li>
                       </ul>
@@ -792,129 +718,129 @@
                   </div>
                 </div>
 
-                <!-- Widget 2: Environmental Regulatory Campaign Tracker (Sneat Tabbed Card Style) -->
+                <!-- Widget 2: Public Outreach by Official Channel -->
                 <div class="col-md-6 col-lg-4 mb-4">
                   <div class="card h-100">
                     <div class="card-header pb-2">
-                      <h5 class="card-title mb-1 text-heading">Regulatory Campaign Outreach</h5>
+                      <h5 class="card-title mb-1 text-heading">Channel Audience Share</h5>
                       <small class="text-muted" id="campaignPeriodNote">Active monitoring window: 28 Days</small>
                     </div>
                     <div class="card-body">
                       
-                      <!-- Campaign Item 1: Anti-Smog Crackdowns -->
+                      <!-- Channel 1: Facebook -->
                       <div class="mb-3 pb-2 border-bottom">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                          <span class="fw-medium small text-heading">Anti-Smog Enforcement Media Drive</span>
-                          <span class="fw-semibold text-primary small">92%</span>
+                          <span class="fw-medium small text-heading">Facebook Official Page</span>
+                          <span class="fw-semibold text-primary small" id="outreachPctFb">88.7%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                          <div class="progress-bar bg-primary" role="progressbar" style="width: 92%;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar bg-primary" id="outreachBarFb" role="progressbar" style="width: 88.7%;" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <small class="text-muted fs-tiny d-block mt-1">185K citizens reached · 45 field bulletins</small>
+                        <small class="text-muted fs-tiny d-block mt-1" id="outreachNoteFb">26,418 Followers · 185K Impressions</small>
                       </div>
 
-                      <!-- Campaign Item 2: Brick Kiln Zig-Zag -->
+                      <!-- Channel 2: Instagram -->
                       <div class="mb-3 pb-2 border-bottom">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                          <span class="fw-medium small text-heading">Brick Kiln Zig-Zag Conversion</span>
-                          <span class="fw-semibold text-success small">84%</span>
+                          <span class="fw-medium small text-heading">Instagram Official Feed</span>
+                          <span class="fw-semibold text-danger small" id="outreachPctIg">9.3%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                          <div class="progress-bar bg-success" role="progressbar" style="width: 84%;" aria-valuenow="84" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar" id="outreachBarIg" role="progressbar" style="width: 9.3%; background-color: #e1306c !important;" aria-valuenow="9" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <small class="text-muted fs-tiny d-block mt-1">320 industrial inspections documented</small>
+                        <small class="text-muted fs-tiny d-block mt-1" id="outreachNoteIg">2,754 Followers · 1,310 Visual Posts</small>
                       </div>
 
-                      <!-- Campaign Item 3: Vehicular Smoke Emission -->
+                      <!-- Channel 3: LinkedIn -->
                       <div class="mb-3 pb-2 border-bottom">
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                          <span class="fw-medium small text-heading">Vehicular Smoke Inspections</span>
-                          <span class="fw-semibold text-info small">76%</span>
+                          <span class="fw-medium small text-heading">LinkedIn Environmental Network</span>
+                          <span class="fw-semibold text-info small" id="outreachPctLi">2.0%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                          <div class="progress-bar bg-info" role="progressbar" style="width: 76%;" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar bg-info" id="outreachBarLi" role="progressbar" style="width: 2.0%;" aria-valuenow="2" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <small class="text-muted fs-tiny d-block mt-1">Joint checkpoints across Lahore ring roads</small>
+                        <small class="text-muted fs-tiny d-block mt-1" id="outreachNoteLi">609 Followers · Environmental Professional Council</small>
                       </div>
 
-                      <!-- Campaign Item 4: Citizen AQI Awareness -->
+                      <!-- Channel 4: TikTok & X -->
                       <div>
                         <div class="d-flex justify-content-between align-items-center mb-1">
-                          <span class="fw-medium small text-heading">Citizen Air Quality Advisory</span>
-                          <span class="fw-semibold text-warning small">68%</span>
+                          <span class="fw-medium small text-heading">TikTok &amp; X (Twitter) Feeds</span>
+                          <span class="fw-semibold text-dark small" id="outreachPctOther">&lt; 0.1%</span>
                         </div>
                         <div class="progress" style="height: 6px;">
-                          <div class="progress-bar bg-warning" role="progressbar" style="width: 68%;" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
+                          <div class="progress-bar bg-secondary" id="outreachBarOther" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
-                        <small class="text-muted fs-tiny d-block mt-1">Daily advisory bulletins & Hotline 1373 notices</small>
+                        <small class="text-muted fs-tiny d-block mt-1" id="outreachNoteOther">5 Videos Published · Verified Public Bulletins</small>
                       </div>
 
                     </div>
                   </div>
                 </div>
 
-                <!-- Widget 3: Real-Time Field Dispatches (Sneat Transactions Style) -->
+                <!-- Widget 3: Real-Time Official Social Dispatches -->
                 <div class="col-md-12 col-lg-4 mb-4">
                   <div class="card h-100">
                     <div class="card-header d-flex align-items-center justify-content-between pb-2">
                       <div>
-                        <h5 class="card-title m-0 text-heading">Operational Dispatches</h5>
-                        <small class="text-muted">Live EPA enforcement feed</small>
+                        <h5 class="card-title m-0 text-heading">Official Social Dispatches</h5>
+                        <small class="text-muted">Live EPA Punjab communications</small>
                       </div>
                       <span class="badge bg-label-success">Verified Feed</span>
                     </div>
                     <div class="card-body">
                       <ul class="p-0 m-0 list-unstyled">
                         
-                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom">
+                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom dispatch-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-danger"><i class="bx bx-error-circle"></i></span>
+                            <span class="avatar-initial rounded bg-label-primary"><i class="bx bxl-facebook"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
-                              <h6 class="mb-0 fw-medium small">Air Quality Advisory Issued</h6>
-                              <small class="text-muted fs-tiny">Lahore, Sheikhupura & Gujranwala</small>
+                              <a href="https://www.facebook.com/EnvironmentProtectionAgencyPunjab/" target="_blank" rel="noopener" class="text-heading text-decoration-none fw-semibold small d-block">Anti-Smog Enforcement Drive</a>
+                              <small class="text-muted fs-tiny">Toba Tek Singh &amp; Lahore EPA field inspections</small>
                             </div>
-                            <span class="badge bg-label-primary fs-tiny">High Priority</span>
+                            <span class="badge bg-label-primary fs-tiny">Facebook Live</span>
                           </div>
                         </li>
 
-                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom">
+                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom dispatch-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-check-shield"></i></span>
+                            <span class="avatar-initial rounded bg-label-danger"><i class="bx bxl-instagram"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
-                              <h6 class="mb-0 fw-medium small">Industrial Units Inspected</h6>
-                              <small class="text-muted fs-tiny">4 non-compliant units sealed</small>
+                              <a href="https://www.instagram.com/epapunjablive/" target="_blank" rel="noopener" class="text-heading text-decoration-none fw-semibold small d-block">Mobile Testing Labs in Action</a>
+                              <small class="text-muted fs-tiny">@epapunjablive · Water &amp; air quality units deployed</small>
                             </div>
-                            <span class="badge bg-label-success fs-tiny">Actioned</span>
+                            <span class="badge bg-label-danger fs-tiny">Instagram Media</span>
                           </div>
                         </li>
 
-                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom">
+                        <li class="d-flex align-items-center mb-3 pb-1 border-bottom dispatch-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-warning"><i class="bx bx-car"></i></span>
+                            <span class="avatar-initial rounded bg-label-info"><i class="bx bxl-linkedin"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
-                              <h6 class="mb-0 fw-medium small">Vehicle Emissions Squads</h6>
-                              <small class="text-muted fs-tiny">Joint checkposts with Traffic Police</small>
+                              <a href="https://pk.linkedin.com/company/environment-protection-agency-punjab" target="_blank" rel="noopener" class="text-heading text-decoration-none fw-semibold small d-block">PEQS Industrial Standards Notice</a>
+                              <small class="text-muted fs-tiny">Punjab Environmental Protection Council policy release</small>
                             </div>
-                            <span class="badge bg-label-warning fs-tiny">In Progress</span>
+                            <span class="badge bg-label-info fs-tiny">LinkedIn Public</span>
                           </div>
                         </li>
 
-                        <li class="d-flex align-items-center">
+                        <li class="d-flex align-items-center dispatch-item">
                           <div class="avatar avatar-sm flex-shrink-0 me-3">
-                            <span class="avatar-initial rounded bg-label-info"><i class="bx bx-broadcast"></i></span>
+                            <span class="avatar-initial rounded bg-label-success"><i class="bx bx-phone-call"></i></span>
                           </div>
                           <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                             <div>
-                              <h6 class="mb-0 fw-medium small">Public Hotline 1373 Broadcast</h6>
-                              <small class="text-muted fs-tiny">Citizen complaints resolution stream</small>
+                              <span class="text-heading fw-semibold small d-block">Citizen Pollution Hotline 1373</span>
+                              <small class="text-muted fs-tiny">24/7 Citizen complaints triage &amp; air advisories</small>
                             </div>
-                            <span class="badge bg-label-info fs-tiny">24/7 Active</span>
+                            <span class="badge bg-label-success fs-tiny">24/7 Active</span>
                           </div>
                         </li>
 
@@ -942,11 +868,7 @@
               <div class="mb-2 mb-md-0 small text-muted">
                 © 2026 <strong>Environmental Protection Agency (EPA)</strong>, Government of the Punjab. All rights reserved.
               </div>
-              <div class="d-flex align-items-center gap-3">
-                <a href="https://epd.punjab.gov.pk" target="_blank" rel="noopener" class="footer-link small text-muted">epd.punjab.gov.pk</a>
-                <span class="text-muted">•</span>
-                <span class="badge bg-label-success fs-tiny">OFFICIAL USE ONLY</span>
-              </div>
+
             </div>
           </footer>
 

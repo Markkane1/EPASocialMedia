@@ -25,6 +25,16 @@ export class HeaderComponent {
     state.subscribe((eventType, data) => {
       if (eventType === 'METRICS_UPDATED') {
         this.updatePeriodDisplay(data.dateRange);
+        const p = data.period || state.currentPeriod;
+        if (p) {
+          this.presetButtons.forEach(b => {
+            b.classList.toggle('active', b.dataset.period === p);
+          });
+        }
+      } else if (eventType === 'PERIOD_CHANGED') {
+        this.presetButtons.forEach(b => {
+          b.classList.toggle('active', b.dataset.period === data);
+        });
       } else if (eventType === 'AUTH_CHANGED') {
         this.updateAuthBadge();
       } else if (eventType === 'VIEW_CHANGED') {

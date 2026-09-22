@@ -4,6 +4,8 @@ import { ExecutiveSummary } from '../../domain/entities/ExecutiveSummary';
 import { SyncLog } from '../../domain/entities/SyncLog';
 import { PrismaClientSingleton } from './PrismaClientSingleton';
 import { PlatformStatus } from '@prisma/client';
+import { getFacebookHistoricalTrends } from '../data/facebookHistoricalData';
+import { getInstagramHistoricalTrends } from '../data/instagramHistoricalData';
 
 export class PrismaMetricsRepository implements IMetricsRepository {
   private inMemoryMetrics: Record<string, PlatformMetric> = {};
@@ -19,13 +21,29 @@ export class PrismaMetricsRepository implements IMetricsRepository {
         name: 'Environmental Protection Agency Punjab',
         handle: 'EnvironmentProtectionAgencyPunjab',
         url: 'https://www.facebook.com/EnvironmentProtectionAgencyPunjab/',
-        followers: 26409,
+        followers: 26418,
         watchTime: null,
         watchTimeHrs: null,
-        newFollowers: 420,
-        views: 185000,
-        contentViews: 185000,
-        engagement: 1872,
+        newFollowers: 1900,
+        views: 1800000,
+        contentViews: 1800000,
+        impressions: 2100000,
+        viewers: 532100,
+        reach: 532100,
+        linkClicks: 1600,
+        visits: 22800,
+        growth: {
+          views: 289.2,
+          viewers: 389.3,
+          reach: 289.2,
+          impressions: 245.0,
+          interactions: 109.2,
+          linkClicks: 80.0,
+          visits: 95.6,
+          follows: 215.7
+        },
+        historicalTrends: getFacebookHistoricalTrends(),
+        engagement: 9400,
         status: 'connected',
         isFallback: false
       }),
@@ -38,9 +56,25 @@ export class PrismaMetricsRepository implements IMetricsRepository {
         watchTime: null,
         watchTimeHrs: null,
         newFollowers: 85,
-        views: 32000,
-        contentViews: 32000,
-        engagement: 1306,
+        views: 55941,
+        contentViews: 55941,
+        impressions: 58400,
+        viewers: 5702,
+        reach: 5702,
+        linkClicks: 124,
+        visits: 602,
+        growth: {
+          views: 145.8,
+          viewers: 98.4,
+          reach: 98.4,
+          impressions: 132.0,
+          interactions: 112.5,
+          linkClicks: 35.0,
+          visits: 44.2,
+          follows: 85.0
+        },
+        historicalTrends: getInstagramHistoricalTrends(),
+        engagement: 1260,
         status: 'connected',
         isFallback: false
       }),
@@ -56,6 +90,14 @@ export class PrismaMetricsRepository implements IMetricsRepository {
         views: 500,
         contentViews: 500,
         engagement: 4,
+        linkClicks: 0,
+        visits: 35,
+        growth: {
+          views: 5.4,
+          reach: 4.9,
+          engagement: 3.2,
+          visits: 4.1
+        },
         status: 'connected',
         isFallback: false
       }),
@@ -71,6 +113,15 @@ export class PrismaMetricsRepository implements IMetricsRepository {
         views: 8500,
         contentViews: 8500,
         engagement: 142,
+        linkClicks: 24,
+        visits: 420,
+        growth: {
+          views: 14.2,
+          reach: 11.5,
+          engagement: 9.8,
+          linkClicks: 8.5,
+          visits: 12.3
+        },
         status: 'connected',
         isFallback: false
       }),
@@ -86,6 +137,14 @@ export class PrismaMetricsRepository implements IMetricsRepository {
         views: 120,
         contentViews: 120,
         engagement: 5,
+        linkClicks: 0,
+        visits: 15,
+        growth: {
+          views: 2.5,
+          reach: 2.1,
+          engagement: 1.9,
+          visits: 1.2
+        },
         status: 'connected',
         isFallback: false
       }),

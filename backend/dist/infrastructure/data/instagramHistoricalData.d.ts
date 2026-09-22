@@ -1,0 +1,15 @@
+import { DailyTrendPoint } from '../../domain/entities/PlatformMetric';
+export declare const INSTAGRAM_7D_DATES_FULL: string[];
+export declare const INSTAGRAM_7D_DATES_SHORT: string[];
+export declare const INSTAGRAM_7D_VIEWS: number[];
+export declare const INSTAGRAM_7D_REACH: number[];
+export declare const INSTAGRAM_7D_INTERACTIONS: number[];
+export declare const INSTAGRAM_7D_LINK_CLICKS: number[];
+export declare const INSTAGRAM_7D_VISITS: number[];
+export declare const INSTAGRAM_7D_FOLLOWS: number[];
+export declare function getInstagram7dTrends(): DailyTrendPoint[];
+export declare const INSTAGRAM_28D_DATES_FULL: string[];
+export declare const INSTAGRAM_28D_DATES_SHORT: string[];
+export declare const INSTAGRAM_28D_VIEWS: number[];
+export declare const INSTAGRAM_28D_REACH: number[];
+export declare function getInstagramHistoricalTrends(): DailyTrendPoint[];

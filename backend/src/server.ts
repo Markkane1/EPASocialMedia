@@ -46,6 +46,14 @@ async function bootstrap() {
 
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error('[SERVER] Unhandled Rejection at:', promise, 'reason:', reason);
+  });
+
+  process.on('uncaughtException', (err) => {
+    console.error('[SERVER] Uncaught Exception:', err);
+  });
 }
 
 if (require.main === module) {

@@ -1,0 +1,19 @@
+{
+  "name": "epa-punjab-social-media-dashboard",
+  "version": "1.0.0",
+  "description": "EPA Punjab Social Media Executive Intelligence & Operations Dashboard",
+  "scripts": {
+    "dev": "npm --prefix backend run dev",
+    "start": "npm --prefix backend start",
+    "build": "npm --prefix backend run build",
+    "test": "npm --prefix backend test",
+    "test:e2e": "python tests/e2e/run_e2e.py"
+  },
+  "keywords": [
+    "epa-punjab",
+    "social-media",
+    "dashboard"
+  ],
+  "author": "EPA Punjab Systems",
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,10 @@
+import { DailyTrendPoint } from '../../domain/entities/PlatformMetric';
+export declare const FACEBOOK_DATES_FULL: string[];
+export declare const FACEBOOK_DATES_SHORT: string[];
+export declare const FACEBOOK_DAILY_VIEWS: number[];
+export declare const FACEBOOK_DAILY_VIEWERS: number[];
+export declare const FACEBOOK_DAILY_INTERACTIONS: number[];
+export declare const FACEBOOK_DAILY_LINK_CLICKS: number[];
+export declare const FACEBOOK_DAILY_VISITS: number[];
+export declare const FACEBOOK_DAILY_FOLLOWS: number[];
+export declare function getFacebookHistoricalTrends(): DailyTrendPoint[];

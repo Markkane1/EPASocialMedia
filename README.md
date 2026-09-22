@@ -69,17 +69,19 @@ npm run prisma:seed
 
 ### 4. Running the Application
 
-#### Development Mode:
+You can now run commands directly from the **project root**:
+
+#### Development Mode (with Live Reload):
 ```bash
-cd backend
 npm run dev
 ```
+*(Or inside `backend/`: `npm run dev`)*
+
 The server will start on `http://127.0.0.1:8080`.
 The frontend dashboard is served directly at `http://127.0.0.1:8080/`.
 
-#### Production Build:
+#### Production Build & Start:
 ```bash
-cd backend
 npm run build
 npm start
 ```

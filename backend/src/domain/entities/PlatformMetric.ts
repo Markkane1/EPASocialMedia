@@ -1,3 +1,15 @@
+export interface DailyTrendPoint {
+  date: string;
+  views: number;
+  viewers: number;
+  reach: number;
+  impressions: number;
+  interactions: number;
+  linkClicks: number;
+  visits: number;
+  follows: number;
+}
+
 export interface PlatformMetricProps {
   platform: string;
   name: string;
@@ -7,6 +19,13 @@ export interface PlatformMetricProps {
   newFollowers: number;
   views: number;
   contentViews: number;
+  impressions?: number;
+  viewers?: number;
+  reach?: number;
+  linkClicks?: number;
+  visits?: number;
+  growth?: Record<string, number>;
+  historicalTrends?: DailyTrendPoint[];
   engagement: number;
   status: 'connected' | 'simulated' | 'error' | 'disconnected' | 'unauthenticated' | 'unconfigured';
   isFallback: boolean;
@@ -24,6 +43,13 @@ export class PlatformMetric {
   public readonly newFollowers: number;
   public readonly views: number;
   public readonly contentViews: number;
+  public readonly impressions: number;
+  public readonly viewers: number;
+  public readonly reach: number;
+  public readonly linkClicks: number;
+  public readonly visits: number;
+  public readonly growth: Record<string, number>;
+  public readonly historicalTrends: DailyTrendPoint[];
   public readonly engagement: number;
   public readonly status: 'connected' | 'simulated' | 'error' | 'disconnected' | 'unauthenticated' | 'unconfigured';
   public readonly isFallback: boolean;
@@ -40,6 +66,13 @@ export class PlatformMetric {
     this.newFollowers = Math.max(0, props.newFollowers);
     this.views = Math.max(0, props.views);
     this.contentViews = Math.max(0, props.contentViews || props.views);
+    this.impressions = Math.max(0, props.impressions ?? (props.contentViews || props.views));
+    this.viewers = Math.max(0, props.viewers ?? Math.round(this.views * 0.3));
+    this.reach = Math.max(0, props.reach ?? this.viewers);
+    this.linkClicks = Math.max(0, props.linkClicks ?? 0);
+    this.visits = Math.max(0, props.visits ?? 0);
+    this.growth = props.growth || {};
+    this.historicalTrends = props.historicalTrends || [];
     this.engagement = Math.max(0, props.engagement);
     this.status = props.status;
     this.isFallback = props.isFallback;
@@ -63,6 +96,11 @@ export class PlatformMetric {
     }
 
     const scaledViews = Math.round(this.views * multiplier);
+    const scaledImpressions = Math.round(this.impressions * multiplier);
+    const scaledViewers = Math.round(this.viewers * multiplier);
+    const scaledReach = Math.round(this.reach * multiplier);
+    const scaledLinkClicks = Math.round(this.linkClicks * multiplier);
+    const scaledVisits = Math.round(this.visits * multiplier);
     const rawWt = this.watchTimeHrs !== null ? this.watchTimeHrs : this.watchTime;
     const scaledWt = rawWt !== null ? Math.round(rawWt * multiplier) : null;
     const scaledEngagement = Math.round(this.engagement * multiplier);
@@ -73,6 +111,11 @@ export class PlatformMetric {
       newFollowers: scaledNewFollowers,
       views: scaledViews,
       contentViews: scaledViews,
+      impressions: scaledImpressions,
+      viewers: scaledViewers,
+      reach: scaledReach,
+      linkClicks: scaledLinkClicks,
+      visits: scaledVisits,
       watchTime: scaledWt,
       watchTimeHrs: scaledWt,
       engagement: scaledEngagement
@@ -89,6 +132,13 @@ export class PlatformMetric {
       new_followers: this.newFollowers,
       views: this.views,
       content_views: this.contentViews,
+      impressions: this.impressions,
+      viewers: this.viewers,
+      reach: this.reach,
+      link_clicks: this.linkClicks,
+      visits: this.visits,
+      growth: this.growth,
+      historical_trends: this.historicalTrends,
       engagement: this.engagement,
       status: this.status,
       is_fallback: this.isFallback,
