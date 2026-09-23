@@ -346,4 +346,46 @@ export class PrismaMetricsRepository implements IMetricsRepository {
   public async getLastSyncTimestamp(): Promise<string> {
     return this.lastSyncTime;
   }
+
+  /**
+   * Applies data retention policy, purging metric records, summaries, and logs
+   * older than retentionDays (defaults to 90 days). (M-19, M-20, M-21)
+   */
+  public async applyRetentionPolicy(retentionDays: number = 90): Promise<{ deletedMetrics: number; deletedSummaries: number; deletedLogs: number }> {
+    const isConnected = await PrismaClientSingleton.checkConnection();
+    if (!isConnected) {
+      return { deletedMetrics: 0, deletedSummaries: 0, deletedLogs: 0 };
+    }
+
+    try {
+      const prisma = PrismaClientSingleton.getInstance();
+      const cutoffDate = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+
+      const [metricsRes, summariesRes, logsRes] = await prisma.$transaction([
+        prisma.metricRecord.deleteMany({
+          where: { recordedAt: { lt: cutoffDate } }
+        }),
+        prisma.executiveSummary.deleteMany({
+          where: { calculatedAt: { lt: cutoffDate } }
+        }),
+        prisma.syncAuditLog.deleteMany({
+          where: { timestamp: { lt: cutoffDate } }
+        })
+      ]);
+
+      console.log(
+        `[DATABASE] Retention policy applied (${retentionDays}d cutoff): purged ${metricsRes.count} metrics, ${summariesRes.count} summaries, ${logsRes.count} logs.`
+      );
+
+      return {
+        deletedMetrics: metricsRes.count,
+        deletedSummaries: summariesRes.count,
+        deletedLogs: logsRes.count
+      };
+    } catch (err: any) {
+      console.error('[DATABASE] Error applying retention policy:', err);
+      return { deletedMetrics: 0, deletedSummaries: 0, deletedLogs: 0 };
+    }
+  }
 }
+

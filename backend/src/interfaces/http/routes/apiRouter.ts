@@ -85,7 +85,9 @@ export function createApiRouter(): Router {
   const healthController = new HealthController();
   const authController = new AuthController(authUseCase);
 
-  // 4. Public Health & Diagnostic Routes
+  // 4. Operational Health & Probes (M-05)
+  router.get('/health/liveness', (req, res) => healthController.getLiveness(req, res));
+  router.get('/health/readiness', (req, res) => healthController.getReadiness(req, res));
   router.get('/status', (req, res) => healthController.getStatus(req, res));
   router.get('/health', (req, res) => healthController.getStatus(req, res));
 

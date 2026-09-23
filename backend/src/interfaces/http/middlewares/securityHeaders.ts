@@ -28,10 +28,10 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   // Tailored Content Security Policy (allows local assets and official Google fonts)
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline'",
+    "script-src 'self'",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
-    "img-src 'self' data: https:",
+    "img-src 'self' data:",
     "connect-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
@@ -149,5 +149,15 @@ export function csrfProtection(req: Request, res: Response, next: NextFunction):
     }
   }
 
+  next();
+}
+
+/**
+ * Prevents client/proxy caching of sensitive API data (M-04)
+ */
+export function apiNoCache(req: Request, res: Response, next: NextFunction): void {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   next();
 }

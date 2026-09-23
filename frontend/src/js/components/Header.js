@@ -1,6 +1,7 @@
 import { state } from '../state/dashboardState.js';
 import { ApiClient } from '../api/apiClient.js';
 import { ViewRouter } from '../router/viewRouter.js';
+import { escapeHtml } from '../utils/formatters.js';
 
 export class HeaderComponent {
   constructor() {
@@ -204,7 +205,7 @@ export class HeaderComponent {
         const badgeText = r.isLive ? 'Live API Synced' : (r.status === 'unconfigured' ? 'Pending Launch' : 'Verified Public');
         return `
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <span class="fw-medium">${r.name || r.platform.toUpperCase()}</span>
+            <span class="fw-medium">${escapeHtml(r.name || r.platform.toUpperCase())}</span>
             <span class="badge ${badgeClass}">${badgeText}</span>
           </div>
         `;

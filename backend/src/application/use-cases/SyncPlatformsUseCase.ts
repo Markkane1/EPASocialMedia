@@ -137,6 +137,11 @@ export class SyncPlatformsUseCase {
       serializedPlatforms[key] = metric.toJSON();
     }
 
+    // Periodic retention policy enforcement (M-19, M-20, M-21)
+    if (this.metricsRepo.applyRetentionPolicy) {
+      this.metricsRepo.applyRetentionPolicy(90).catch(() => {});
+    }
+
     return {
       status: overallStatus,
       message:

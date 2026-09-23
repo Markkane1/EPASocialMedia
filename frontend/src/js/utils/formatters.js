@@ -19,6 +19,12 @@ export function formatCompact(num) {
   if (val >= 1_000) {
     return (val / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
   }
-  return val.toString();
+export function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
-

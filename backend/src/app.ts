@@ -8,7 +8,8 @@ import { createApiRouter } from './interfaces/http/routes/apiRouter';
 import {
   securityHeaders,
   createCorsMiddleware,
-  csrfProtection
+  csrfProtection,
+  apiNoCache
 } from './interfaces/http/middlewares/securityHeaders';
 
 export function createApp(): Express {
@@ -20,17 +21,17 @@ export function createApp(): Express {
   // 2. Strict Whitelist-Enforced CORS
   app.use(createCorsMiddleware());
 
-  // 3. Body Parsing & Logging
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // 3. Body Parsing with Strict Payload Size Limits (M-03)
+  app.use(express.json({ limit: '10kb' }));
+  app.use(express.urlencoded({ extended: false, limit: '10kb' }));
   app.use(requestLogger);
 
   // 4. CSRF Defense for State-Changing Requests
   app.use(csrfProtection);
 
-  // Mount API Endpoints
+  // Mount API Endpoints with Anti-Caching for Sensitive Operations Data (M-04)
   const apiRouter = createApiRouter();
-  app.use('/api', apiRouter);
+  app.use('/api', apiNoCache, apiRouter);
 
   // Serve Frontend Assets (Clean separation: frontend static distribution)
   const frontendPublicDir = path.resolve(__dirname, '../../frontend/public');

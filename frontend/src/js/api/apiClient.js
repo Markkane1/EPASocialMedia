@@ -5,16 +5,31 @@
 const BASE_URL = window.location.origin;
 
 export const ApiClient = {
+  _inMemoryToken: '',
+
   getToken() {
-    return localStorage.getItem('epa_auth_token') || sessionStorage.getItem('epa_auth_token') || '';
+    if (this._inMemoryToken) return this._inMemoryToken;
+    try {
+      const sessionToken = sessionStorage.getItem('epa_auth_token');
+      if (sessionToken) {
+        this._inMemoryToken = sessionToken;
+        return sessionToken;
+      }
+    } catch {}
+    return '';
   },
 
-  setToken(token, remember = true) {
-    if (remember) {
-      localStorage.setItem('epa_auth_token', token);
-    } else {
-      sessionStorage.setItem('epa_auth_token', token);
-    }
+  setToken(token) {
+    this._inMemoryToken = token || '';
+    try {
+      if (token) {
+        sessionStorage.setItem('epa_auth_token', token);
+      } else {
+        sessionStorage.removeItem('epa_auth_token');
+      }
+      // Security: Purge persistent localStorage tokens (H-01 mitigation)
+      localStorage.removeItem('epa_auth_token');
+    } catch {}
   },
 
   async logout() {
@@ -32,8 +47,11 @@ export const ApiClient = {
   },
 
   clearToken() {
-    localStorage.removeItem('epa_auth_token');
-    sessionStorage.removeItem('epa_auth_token');
+    this._inMemoryToken = '';
+    try {
+      sessionStorage.removeItem('epa_auth_token');
+      localStorage.removeItem('epa_auth_token');
+    } catch {}
   },
 
   getAuthHeaders() {

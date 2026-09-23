@@ -362,22 +362,22 @@ export class PlatformDetailView {
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
               <li>
-                <a class="dropdown-item period-toggle-item ${currentPeriod === '7d' ? 'active' : ''}" href="javascript:void(0);" data-period="7d">
+                <a class="dropdown-item period-toggle-item ${currentPeriod === '7d' ? 'active' : ''}" href="#" role="button" data-period="7d">
                   <i class="bx bx-check me-2 ${currentPeriod === '7d' ? '' : 'invisible'}"></i>Last 7 days: 14 Sep 2026 - 20 Sep 2026
                 </a>
               </li>
               <li>
-                <a class="dropdown-item period-toggle-item ${currentPeriod === '28d' ? 'active' : ''}" href="javascript:void(0);" data-period="28d">
+                <a class="dropdown-item period-toggle-item ${currentPeriod === '28d' ? 'active' : ''}" href="#" role="button" data-period="28d">
                   <i class="bx bx-check me-2 ${currentPeriod === '28d' ? '' : 'invisible'}"></i>Last 28 days: 24 Aug 2026 - 20 Sep 2026
                 </a>
               </li>
               <li>
-                <a class="dropdown-item period-toggle-item ${currentPeriod === '90d' ? 'active' : ''}" href="javascript:void(0);" data-period="90d">
+                <a class="dropdown-item period-toggle-item ${currentPeriod === '90d' ? 'active' : ''}" href="#" role="button" data-period="90d">
                   <i class="bx bx-check me-2 ${currentPeriod === '90d' ? '' : 'invisible'}"></i>Last 90 days: 23 Jun 2026 - 20 Sep 2026
                 </a>
               </li>
               <li>
-                <a class="dropdown-item period-toggle-item ${currentPeriod === 'ytd' ? 'active' : ''}" href="javascript:void(0);" data-period="ytd">
+                <a class="dropdown-item period-toggle-item ${currentPeriod === 'ytd' ? 'active' : ''}" href="#" role="button" data-period="ytd">
                   <i class="bx bx-check me-2 ${currentPeriod === 'ytd' ? '' : 'invisible'}"></i>Past Year / YTD: 21 Sep 2025 - 20 Sep 2026
                 </a>
               </li>
