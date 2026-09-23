@@ -83,4 +83,3 @@ function getInstagramHistoricalTrends() {
         follows: i >= 21 ? exports.INSTAGRAM_7D_FOLLOWS[i - 21] : Math.max(1, Math.round(exports.INSTAGRAM_28D_REACH[i] * 0.015))
     }));
 }
-//# sourceMappingURL=instagramHistoricalData.js.map

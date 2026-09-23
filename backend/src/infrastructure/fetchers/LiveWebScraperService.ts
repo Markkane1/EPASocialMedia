@@ -39,7 +39,7 @@ export class LiveWebScraperService {
   }
 
   public static async refreshLiveMetrics(): Promise<Record<string, ScrapedPlatformMetrics>> {
-    if (this.isScraping) {
+    if (process.env.NODE_ENV === 'test' || this.isScraping) {
       return this.cachedData;
     }
     this.isScraping = true;

@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireAuth = void 0;
 exports.authenticateToken = authenticateToken;
-exports.requireRole = requireRole;
 exports.requirePermission = requirePermission;
 const AuthService_1 = require("../../../infrastructure/auth/AuthService");
 const SessionManager_1 = require("../../../infrastructure/auth/SessionManager");
@@ -40,25 +39,6 @@ function authenticateToken(req, res, next) {
     next();
 }
 exports.requireAuth = authenticateToken;
-function requireRole(requiredRole) {
-    return (req, res, next) => {
-        if (!req.user) {
-            res.status(401).json({
-                error: 'Unauthorized',
-                message: 'Authentication required.'
-            });
-            return;
-        }
-        if (req.user.role !== requiredRole && req.user.role !== 'ADMIN') {
-            res.status(403).json({
-                error: 'Forbidden',
-                message: `Access denied. Requires '${requiredRole}' role.`
-            });
-            return;
-        }
-        next();
-    };
-}
 function requirePermission(requiredPermission) {
     const { hasPermission } = require('../../../infrastructure/auth/Permissions');
     return (req, res, next) => {
@@ -80,4 +60,3 @@ function requirePermission(requiredPermission) {
         next();
     };
 }
-//# sourceMappingURL=authGuard.js.map

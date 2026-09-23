@@ -39,7 +39,7 @@ class AuthController {
     constructor(authUseCase) {
         this.authUseCase = authUseCase;
     }
-    login = async (req, res) => {
+    login = async (req, res, next) => {
         try {
             const { username, password } = req.body;
             const result = await this.authUseCase.login(username, password);
@@ -58,55 +58,68 @@ class AuthController {
             });
         }
         catch (err) {
-            res.status(500).json({
-                error: 'InternalServerError',
-                message: err.message
+            next(err);
+        }
+    };
+    getMe = async (req, res, next) => {
+        try {
+            if (!req.user) {
+                res.status(401).json({ error: 'Unauthorized', message: 'No active session.' });
+                return;
+            }
+            res.status(200).json({
+                status: 'success',
+                user: {
+                    username: req.user.username,
+                    role: req.user.role,
+                    fullName: req.user.fullName
+                }
             });
         }
-    };
-    getMe = async (req, res) => {
-        if (!req.user) {
-            res.status(401).json({ error: 'Unauthorized', message: 'No active session.' });
-            return;
+        catch (err) {
+            next(err);
         }
-        res.status(200).json({
-            status: 'success',
-            user: {
-                username: req.user.username,
-                role: req.user.role,
-                fullName: req.user.fullName
+    };
+    logout = async (req, res, next) => {
+        try {
+            if (req.user?.sessionId) {
+                const { SessionManager } = await Promise.resolve().then(() => __importStar(require('../../../infrastructure/auth/SessionManager')));
+                SessionManager.revokeSession(req.user.sessionId, 'USER_LOGOUT');
             }
-        });
-    };
-    logout = async (req, res) => {
-        if (req.user?.sessionId) {
-            const { SessionManager } = await Promise.resolve().then(() => __importStar(require('../../../infrastructure/auth/SessionManager')));
-            SessionManager.revokeSession(req.user.sessionId, 'USER_LOGOUT');
+            const { SecurityAuditLogger } = await Promise.resolve().then(() => __importStar(require('../../../infrastructure/logging/SecurityAuditLogger')));
+            SecurityAuditLogger.record({
+                actor: req.user?.username || 'ANONYMOUS',
+                action: 'USER_LOGOUT',
+                resource: '/api/auth/logout',
+                result: 'SUCCESS',
+                ipAddress: req.ip || req.socket.remoteAddress
+            });
+            res.status(200).json({
+                status: 'success',
+                message: 'Logged out successfully. Session invalidated.'
+            });
         }
-        const { SecurityAuditLogger } = await Promise.resolve().then(() => __importStar(require('../../../infrastructure/logging/SecurityAuditLogger')));
-        SecurityAuditLogger.record({
-            actor: req.user?.username || 'ANONYMOUS',
-            action: 'USER_LOGOUT',
-            resource: '/api/auth/logout',
-            result: 'SUCCESS',
-            ipAddress: req.ip || req.socket.remoteAddress
-        });
-        res.status(200).json({
-            status: 'success',
-            message: 'Logged out successfully. Session invalidated.'
-        });
+        catch (err) {
+            next(err);
+        }
     };
-    getAuditLogs = async (req, res) => {
-        const { SecurityAuditLogger } = await Promise.resolve().then(() => __importStar(require('../../../infrastructure/logging/SecurityAuditLogger')));
-        const limit = req.query.limit ? parseInt(req.query.limit, 10) : 50;
-        const logs = SecurityAuditLogger.getRecentLogs(limit);
-        res.status(200).json({
-            status: 'success',
-            total: logs.length,
-            logs
-        });
+    getAuditLogs = async (req, res, next) => {
+        try {
+            const { SecurityAuditLogger } = await Promise.resolve().then(() => __importStar(require('../../../infrastructure/logging/SecurityAuditLogger')));
+            const rawLimit = typeof req.query.limit === 'number' ? req.query.limit : parseInt(req.query.limit, 10);
+            const limit = isNaN(rawLimit) ? 50 : Math.max(1, Math.min(100, rawLimit));
+            const logs = await SecurityAuditLogger.getDurableLogs(limit);
+            res.status(200).json({
+                status: 'success',
+                total: logs.length,
+                logs
+            });
+        }
+        catch (err) {
+            next(err);
+        }
     };
-    changePassword = async (req, res) => {
+    changePassword = async (req, res, next) => {
         try {
             if (!req.user) {
                 res.status(401).json({ error: 'Unauthorized', message: 'No active session.' });
@@ -128,27 +141,28 @@ class AuthController {
             });
         }
         catch (err) {
-            res.status(500).json({
-                error: 'InternalServerError',
-                message: err.message
-            });
+            next(err);
         }
     };
-    listUsers = async (req, res) => {
+    listUsers = async (req, res, next) => {
         try {
             const users = await this.authUseCase.listUsers();
             res.status(200).json({ status: 'success', users });
         }
         catch (err) {
-            res.status(500).json({ error: 'InternalServerError', message: err.message });
+            next(err);
         }
     };
-    setUserStatus = async (req, res) => {
+    setUserStatus = async (req, res, next) => {
         try {
             const targetUsername = req.params.username;
             const { isActive } = req.body;
+            if (typeof isActive !== 'boolean') {
+                res.status(400).json({ error: 'BadRequest', message: 'Field "isActive" must be an explicit boolean.' });
+                return;
+            }
             const actorUsername = req.user?.username || 'SYSTEM';
-            const result = await this.authUseCase.setUserActiveStatus(targetUsername, Boolean(isActive), actorUsername);
+            const result = await this.authUseCase.setUserActiveStatus(targetUsername, isActive, actorUsername);
             if (!result.success) {
                 res.status(400).json({ error: 'BadRequest', message: result.message });
                 return;
@@ -156,9 +170,8 @@ class AuthController {
             res.status(200).json({ status: 'success', message: result.message });
         }
         catch (err) {
-            res.status(500).json({ error: 'InternalServerError', message: err.message });
+            next(err);
         }
     };
 }
 exports.AuthController = AuthController;
-//# sourceMappingURL=AuthController.js.map

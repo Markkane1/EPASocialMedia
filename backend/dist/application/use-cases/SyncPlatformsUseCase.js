@@ -58,26 +58,66 @@ class SyncPlatformsUseCase {
             }
         });
         await Promise.all(fetchPromises);
-        // Save to persistence
-        await this.metricsRepo.savePlatformMetrics(fetchedMetrics);
-        // Compute and save executive summary
-        const summary = ExecutiveSummary_1.ExecutiveSummary.fromPlatformMetrics(metricList);
+        const totalFetchers = this.fetchers.length;
+        const successfulCount = metricList.length;
+        const failedCount = syncReport.filter((r) => r.status === 'error').length;
+        const existingMetrics = typeof this.metricsRepo.getAllPlatformMetrics === 'function'
+            ? await this.metricsRepo.getAllPlatformMetrics()
+            : typeof this.metricsRepo.getPlatformMetrics === 'function'
+                ? await this.metricsRepo.getPlatformMetrics()
+                : {};
+        if (successfulCount === 0) {
+            // All fetchers failed - guard against wiping repository!
+            const existingList = Object.values(existingMetrics);
+            const fallbackSummary = ExecutiveSummary_1.ExecutiveSummary.fromPlatformMetrics(existingList);
+            const log = new SyncLog_1.SyncLog({
+                timestamp: nowIso,
+                status: 'error',
+                message: `Sync failed: all ${totalFetchers} platform fetchers failed. Last known data preserved.`
+            });
+            await this.metricsRepo.addSyncLog(log);
+            const serializedExisting = {};
+            for (const [k, m] of Object.entries(existingMetrics)) {
+                serializedExisting[k] = m.toJSON();
+            }
+            return {
+                status: 'error',
+                message: `Synchronization failed: all ${totalFetchers} platform fetchers encountered errors. Last known good metrics preserved.`,
+                summary: fallbackSummary.toJSON(),
+                platforms: serializedExisting,
+                last_sync: nowIso,
+                syncReport
+            };
+        }
+        // Merge fetched metrics with existing metrics so partially failed fetchers don't drop existing platforms
+        const mergedMetrics = { ...existingMetrics, ...fetchedMetrics };
+        await this.metricsRepo.savePlatformMetrics(mergedMetrics);
+        const mergedMetricList = Object.values(mergedMetrics);
+        const summary = ExecutiveSummary_1.ExecutiveSummary.fromPlatformMetrics(mergedMetricList);
         await this.metricsRepo.saveExecutiveSummary('28d', summary);
-        // Create sync audit log
-        const activeCount = metricList.filter(m => m.status === 'connected').length;
+        const overallStatus = failedCount > 0 ? 'warning' : 'success';
+        const activeCount = mergedMetricList.filter((m) => m.status === 'connected').length;
         const log = new SyncLog_1.SyncLog({
             timestamp: nowIso,
-            status: 'success',
-            message: `Live sync completed: ${activeCount} active official channels (${summary.totalFollowers.toLocaleString()} total followers verified).`
+            status: overallStatus,
+            message: overallStatus === 'warning'
+                ? `Partial sync: ${successfulCount}/${totalFetchers} channels updated, ${failedCount} failed.`
+                : `Live sync completed: ${activeCount} active official channels (${summary.totalFollowers.toLocaleString()} total followers verified).`
         });
         await this.metricsRepo.addSyncLog(log);
         const serializedPlatforms = {};
-        for (const [key, metric] of Object.entries(fetchedMetrics)) {
+        for (const [key, metric] of Object.entries(mergedMetrics)) {
             serializedPlatforms[key] = metric.toJSON();
         }
+        // Periodic retention policy enforcement (M-19, M-20, M-21)
+        if (this.metricsRepo.applyRetentionPolicy) {
+            this.metricsRepo.applyRetentionPolicy(90).catch(() => { });
+        }
         return {
-            status: 'success',
-            message: `Synchronized ${metricList.length} channels (${summary.totalFollowers.toLocaleString()} total verified network followers).`,
+            status: overallStatus,
+            message: overallStatus === 'warning'
+                ? `Partial synchronization completed (${successfulCount}/${totalFetchers} updated, ${failedCount} retained).`
+                : `Synchronized ${metricList.length} channels (${summary.totalFollowers.toLocaleString()} total verified network followers).`,
             summary: summary.toJSON(),
             platforms: serializedPlatforms,
             last_sync: nowIso,
@@ -86,4 +126,3 @@ class SyncPlatformsUseCase {
     }
 }
 exports.SyncPlatformsUseCase = SyncPlatformsUseCase;
-//# sourceMappingURL=SyncPlatformsUseCase.js.map

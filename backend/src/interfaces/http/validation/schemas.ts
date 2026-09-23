@@ -87,6 +87,8 @@ export const ChangePasswordSchema = z.object({
     .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
     .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
     .regex(/[0-9]/, 'Password must contain at least one number')
+});
+
 export const UserStatusSchema = z
   .object({
     isActive: z.boolean({ required_error: 'isActive must be a boolean' })

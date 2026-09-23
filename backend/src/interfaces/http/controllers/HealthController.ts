@@ -22,6 +22,21 @@ export class HealthController {
   };
 
   /**
+   * Public health check for /api/status returning healthy status with sanitized database connection flag
+   */
+  public getPublicStatus = async (req: Request, res: Response): Promise<void> => {
+    const dbConnected = await PrismaClientSingleton.checkConnection();
+    res.status(200).json({
+      status: 'healthy',
+      service: 'EPA Punjab Social Media Intelligence API',
+      database: {
+        connected: dbConnected
+      },
+      timestamp: new Date().toISOString()
+    });
+  };
+
+  /**
    * Health status: returns sanitized status for public callers, or diagnostics for admins (M-05).
    */
   public getStatus = async (req: Request, res: Response): Promise<void> => {

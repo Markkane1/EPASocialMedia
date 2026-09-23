@@ -83,6 +83,10 @@ export class LoginThrottle {
     return { locked: false, remainingAttempts: remaining };
   }
 
+  public static recordFailedAttempt(identifier: string, ip?: string): void {
+    this.recordFailure(identifier, ip);
+  }
+
   public static recordSuccess(identifier: string, ip?: string): void {
     const cleanUser = identifier.toLowerCase().trim();
     const key = ip ? `${cleanUser}:${ip.trim()}` : cleanUser;

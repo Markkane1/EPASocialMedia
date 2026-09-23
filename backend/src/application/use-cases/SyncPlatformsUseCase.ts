@@ -81,13 +81,17 @@ export class SyncPlatformsUseCase {
     const successfulCount = metricList.length;
     const failedCount = syncReport.filter((r) => r.status === 'error').length;
 
-    const existingMetrics = await this.metricsRepo.getPlatformMetrics();
+    const existingMetrics: Record<string, PlatformMetric> =
+      typeof this.metricsRepo.getAllPlatformMetrics === 'function'
+        ? await this.metricsRepo.getAllPlatformMetrics()
+        : typeof (this.metricsRepo as any).getPlatformMetrics === 'function'
+        ? await (this.metricsRepo as any).getPlatformMetrics()
+        : {};
 
     if (successfulCount === 0) {
       // All fetchers failed - guard against wiping repository!
-      const lastSummary = await this.metricsRepo.getExecutiveSummary('28d');
-      const fallbackSummary =
-        lastSummary || ExecutiveSummary.fromPlatformMetrics(Object.values(existingMetrics));
+      const existingList: PlatformMetric[] = Object.values(existingMetrics);
+      const fallbackSummary = ExecutiveSummary.fromPlatformMetrics(existingList);
 
       const log = new SyncLog({
         timestamp: nowIso,
@@ -98,7 +102,7 @@ export class SyncPlatformsUseCase {
 
       const serializedExisting: Record<string, ReturnType<PlatformMetric['toJSON']>> = {};
       for (const [k, m] of Object.entries(existingMetrics)) {
-        serializedExisting[k] = m.toJSON();
+        serializedExisting[k] = (m as PlatformMetric).toJSON();
       }
 
       return {
@@ -112,15 +116,15 @@ export class SyncPlatformsUseCase {
     }
 
     // Merge fetched metrics with existing metrics so partially failed fetchers don't drop existing platforms
-    const mergedMetrics = { ...existingMetrics, ...fetchedMetrics };
+    const mergedMetrics: Record<string, PlatformMetric> = { ...existingMetrics, ...fetchedMetrics };
     await this.metricsRepo.savePlatformMetrics(mergedMetrics);
 
-    const mergedMetricList = Object.values(mergedMetrics);
+    const mergedMetricList: PlatformMetric[] = Object.values(mergedMetrics);
     const summary = ExecutiveSummary.fromPlatformMetrics(mergedMetricList);
     await this.metricsRepo.saveExecutiveSummary('28d', summary);
 
     const overallStatus: 'success' | 'warning' = failedCount > 0 ? 'warning' : 'success';
-    const activeCount = mergedMetricList.filter((m) => m.status === 'connected').length;
+    const activeCount = mergedMetricList.filter((m) => (m as PlatformMetric).status === 'connected').length;
 
     const log = new SyncLog({
       timestamp: nowIso,
@@ -134,7 +138,7 @@ export class SyncPlatformsUseCase {
 
     const serializedPlatforms: Record<string, ReturnType<PlatformMetric['toJSON']>> = {};
     for (const [key, metric] of Object.entries(mergedMetrics)) {
-      serializedPlatforms[key] = metric.toJSON();
+      serializedPlatforms[key] = (metric as PlatformMetric).toJSON();
     }
 
     // Periodic retention policy enforcement (M-19, M-20, M-21)

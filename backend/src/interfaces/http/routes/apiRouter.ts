@@ -88,7 +88,7 @@ export function createApiRouter(): Router {
   // 4. Operational Health & Probes (M-05)
   router.get('/health/liveness', (req, res) => healthController.getLiveness(req, res));
   router.get('/health/readiness', (req, res) => healthController.getReadiness(req, res));
-  router.get('/status', (req, res) => healthController.getStatus(req, res));
+  router.get('/status', (req, res) => healthController.getPublicStatus(req, res));
   router.get('/health', (req, res) => healthController.getStatus(req, res));
 
   // 5. Authentication Routes

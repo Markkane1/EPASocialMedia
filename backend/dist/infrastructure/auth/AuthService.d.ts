@@ -10,6 +10,7 @@ export interface TokenPayload {
 }
 export declare class AuthService {
     private static getSecret;
+    static validateStartupConfig(): void;
     static hashPassword(password: string): string;
     static verifyPassword(password: string, storedHash: string): boolean;
     static createToken(payload: Omit<TokenPayload, 'exp'>, expiresInHours?: number): string;

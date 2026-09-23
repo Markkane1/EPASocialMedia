@@ -9,4 +9,3 @@ function requestLogger(req, res, next) {
     });
     next();
 }
-//# sourceMappingURL=requestLogger.js.map

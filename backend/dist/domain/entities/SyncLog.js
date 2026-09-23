@@ -24,4 +24,3 @@ class SyncLog {
     }
 }
 exports.SyncLog = SyncLog;
-//# sourceMappingURL=SyncLog.js.map

@@ -10,15 +10,15 @@ class LinkedInFetcher {
     accessToken;
     constructor(vanityName, orgId, accessToken) {
         this.vanityName = vanityName || process.env.LINKEDIN_VANITY_NAME || 'environment-protection-agency-punjab';
-        this.orgId = orgId || process.env.LINKEDIN_ORG_ID || '';
+        this.orgId = orgId || process.env.LINKEDIN_ORGANIZATION_ID || process.env.LINKEDIN_ORG_ID || '';
         this.accessToken = accessToken || process.env.LINKEDIN_ACCESS_TOKEN || '';
     }
     async testConnection() {
         if (!this.accessToken || !this.accessToken.trim()) {
             return {
-                status: 'OK',
+                status: 'ERROR',
                 platform: 'linkedin',
-                message: 'Connected via Live Public Web Probe (609 followers on LinkedIn). Add LINKEDIN_ACCESS_TOKEN for LinkedIn API v2.'
+                message: 'LinkedIn API access token not configured (LINKEDIN_ACCESS_TOKEN is missing). Please configure an OAuth 2.0 token in Settings.'
             };
         }
         try {
@@ -60,8 +60,9 @@ class LinkedInFetcher {
         let newFollowers = 18;
         let views = scraped.reach; // 8500
         let engagement = scraped.engagement; // 142
-        let status = 'connected';
-        let isFallback = false;
+        const hasToken = !!(this.accessToken && this.accessToken.trim());
+        let status = hasToken ? 'connected' : 'unauthenticated';
+        let isFallback = !hasToken;
         if (this.accessToken && this.accessToken.trim()) {
             try {
                 const cleanOrgUrn = this.orgId.startsWith('urn:li:organization:') ? this.orgId : `urn:li:organization:${this.orgId}`;
@@ -104,4 +105,3 @@ class LinkedInFetcher {
     }
 }
 exports.LinkedInFetcher = LinkedInFetcher;
-//# sourceMappingURL=LinkedInFetcher.js.map

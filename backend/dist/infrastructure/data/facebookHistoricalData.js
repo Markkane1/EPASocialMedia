@@ -69,4 +69,3 @@ function getFacebookHistoricalTrends() {
         follows: exports.FACEBOOK_DAILY_FOLLOWS[i]
     }));
 }
-//# sourceMappingURL=facebookHistoricalData.js.map

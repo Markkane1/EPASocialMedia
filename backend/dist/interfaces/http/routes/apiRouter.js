@@ -67,14 +67,16 @@ function createApiRouter() {
     const configController = new ConfigController_1.ConfigController(configUseCase, testConnectionUseCase);
     const healthController = new HealthController_1.HealthController();
     const authController = new AuthController_1.AuthController(authUseCase);
-    // 4. Public Health & Diagnostic Routes
-    router.get('/status', (req, res) => healthController.getStatus(req, res));
+    // 4. Operational Health & Probes (M-05)
+    router.get('/health/liveness', (req, res) => healthController.getLiveness(req, res));
+    router.get('/health/readiness', (req, res) => healthController.getReadiness(req, res));
+    router.get('/status', (req, res) => healthController.getPublicStatus(req, res));
     router.get('/health', (req, res) => healthController.getStatus(req, res));
     // 5. Authentication Routes
-    router.post('/auth/login', authLimiter, (0, validateRequest_1.validateBody)(schemas_1.LoginSchema), (req, res) => authController.login(req, res));
-    router.get('/auth/me', authGuard_1.requireAuth, (req, res) => authController.getMe(req, res));
-    router.post('/auth/logout', authGuard_1.requireAuth, (req, res) => authController.logout(req, res));
-    router.post('/auth/change-password', authGuard_1.requireAuth, authLimiter, (0, validateRequest_1.validateBody)(schemas_1.ChangePasswordSchema), (req, res) => authController.changePassword(req, res));
+    router.post('/auth/login', authLimiter, (0, validateRequest_1.validateBody)(schemas_1.LoginSchema), (req, res, next) => authController.login(req, res, next));
+    router.get('/auth/me', authGuard_1.requireAuth, (req, res, next) => authController.getMe(req, res, next));
+    router.post('/auth/logout', authGuard_1.requireAuth, (req, res, next) => authController.logout(req, res, next));
+    router.post('/auth/change-password', authGuard_1.requireAuth, authLimiter, (0, validateRequest_1.validateBody)(schemas_1.ChangePasswordSchema), (req, res, next) => authController.changePassword(req, res, next));
     // 6. Protected Operational Routes (Authentication & Permission Required)
     router.get('/metrics', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('VIEW_METRICS'), (0, validateRequest_1.validateQuery)(schemas_1.MetricsQuerySchema), (req, res, next) => metricsController.getMetrics(req, res, next));
     router.post('/sync', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('TRIGGER_SYNC'), syncLimiter, (req, res, next) => syncController.syncAll(req, res, next));
@@ -83,10 +85,9 @@ function createApiRouter() {
     router.post('/config', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_CONFIG'), configLimiter, (0, validateRequest_1.validateBody)(schemas_1.UpdateConfigSchema), (req, res, next) => configController.updateConfig(req, res, next));
     router.post('/test-connection', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('TEST_CONNECTION'), configLimiter, (0, validateRequest_1.validateBody)(schemas_1.TestConnectionSchema), (req, res, next) => configController.testConnection(req, res, next));
     // 8. Audit Trail & Security Events (Admin Only)
-    router.get('/audit-logs', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_CONFIG'), (req, res) => authController.getAuditLogs(req, res));
+    router.get('/audit-logs', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_CONFIG'), (0, validateRequest_1.validateQuery)(schemas_1.AuditLogQuerySchema), (req, res, next) => authController.getAuditLogs(req, res, next));
     // 9. User & Administrative Management Guardrails (Admin Only)
-    router.get('/users', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_USERS'), (req, res) => authController.listUsers(req, res));
-    router.post('/users/:username/status', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_USERS'), (req, res) => authController.setUserStatus(req, res));
+    router.get('/users', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_USERS'), (req, res, next) => authController.listUsers(req, res, next));
+    router.post('/users/:username/status', authGuard_1.requireAuth, (0, authGuard_1.requirePermission)('MANAGE_USERS'), (0, validateRequest_1.validateBody)(schemas_1.UserStatusSchema), (req, res, next) => authController.setUserStatus(req, res, next));
     return router;
 }
-//# sourceMappingURL=apiRouter.js.map

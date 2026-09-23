@@ -28,10 +28,11 @@ export interface GetMetricsResponse {
         status: string;
         message: string;
     }>;
+    isEstimated?: boolean;
+    provenance?: string;
 }
 export declare class GetMetricsUseCase {
     private readonly metricsRepo;
-    private static readonly PERIOD_MULTIPLIERS;
     constructor(metricsRepo: IMetricsRepository);
     execute(request: GetMetricsRequest): Promise<GetMetricsResponse>;
 }

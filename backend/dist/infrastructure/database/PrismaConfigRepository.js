@@ -26,13 +26,27 @@ class PrismaConfigRepository {
         return config;
     }
     async updateConfig(updates) {
-        this.configService.saveConfig(updates);
+        const sensitiveKeys = ['FB_ACCESS_TOKEN', 'IG_ACCESS_TOKEN', 'YOUTUBE_API_KEY', 'TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET', 'X_BEARER_TOKEN', 'LINKEDIN_ACCESS_TOKEN', 'DATABASE_URL'];
+        const safeUpdates = {};
+        for (const [key, value] of Object.entries(updates)) {
+            if (sensitiveKeys.includes(key)) {
+                // Prevent masked placeholder or empty values from clobbering active credentials
+                if (!value || value.includes('•') || value.trim() === '') {
+                    continue;
+                }
+            }
+            safeUpdates[key] = value;
+        }
+        if (Object.keys(safeUpdates).length === 0) {
+            return;
+        }
+        this.configService.saveConfig(safeUpdates);
         const isConnected = await PrismaClientSingleton_1.PrismaClientSingleton.checkConnection();
         if (isConnected) {
             try {
                 const prisma = PrismaClientSingleton_1.PrismaClientSingleton.getInstance();
-                for (const [key, value] of Object.entries(updates)) {
-                    const isSensitive = ['FB_ACCESS_TOKEN', 'IG_ACCESS_TOKEN', 'YOUTUBE_API_KEY', 'TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET', 'X_BEARER_TOKEN', 'LINKEDIN_ACCESS_TOKEN', 'DATABASE_URL'].includes(key);
+                for (const [key, value] of Object.entries(safeUpdates)) {
+                    const isSensitive = sensitiveKeys.includes(key);
                     await prisma.systemSetting.upsert({
                         where: { key },
                         update: { value, isSensitive },
@@ -51,4 +65,3 @@ class PrismaConfigRepository {
     }
 }
 exports.PrismaConfigRepository = PrismaConfigRepository;
-//# sourceMappingURL=PrismaConfigRepository.js.map

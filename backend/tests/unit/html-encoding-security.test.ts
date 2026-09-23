@@ -1,9 +1,18 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import * as vm from 'vm';
+
 describe('HTML Output Encoding & Anti-XSS (Item 19, L-04, L-05, L-06)', () => {
   let escapeHtml: any;
 
-  beforeAll(async () => {
-    const mod = await import('../../../frontend/src/js/utils/formatters.js');
-    escapeHtml = mod.escapeHtml;
+  beforeAll(() => {
+    const filePath = path.resolve(__dirname, '../../../frontend/src/js/utils/formatters.js');
+    const code = fs.readFileSync(filePath, 'utf-8');
+    const stripped = code.replace(/export\s+/g, '');
+    const sandbox: Record<string, any> = {};
+    vm.createContext(sandbox);
+    vm.runInContext(stripped, sandbox);
+    escapeHtml = sandbox.escapeHtml;
   });
 
   it('correctly escapes HTML special characters into safe entities', () => {

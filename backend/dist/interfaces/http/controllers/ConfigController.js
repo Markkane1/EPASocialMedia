@@ -39,4 +39,3 @@ class ConfigController {
     }
 }
 exports.ConfigController = ConfigController;
-//# sourceMappingURL=ConfigController.js.map

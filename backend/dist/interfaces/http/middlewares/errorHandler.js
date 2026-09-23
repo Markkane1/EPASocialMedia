@@ -34,4 +34,3 @@ function errorHandler(err, req, res, next) {
         ...(isDev && err.stack ? { stack: sanitizeErrorDetail(err.stack) } : {})
     });
 }
-//# sourceMappingURL=errorHandler.js.map

@@ -14,9 +14,9 @@ class XFetcher {
     async testConnection() {
         if (!this.bearerToken || !this.bearerToken.trim()) {
             return {
-                status: 'OK',
+                status: 'ERROR',
                 platform: 'x',
-                message: 'Connected via Live Public Web Probe (Handle @EPAPunjab). Add X_BEARER_TOKEN for Twitter API v2.'
+                message: 'X (Twitter) API Bearer token not configured (X_BEARER_TOKEN is missing). Please configure a valid Bearer token in Settings.'
             };
         }
         try {
@@ -57,8 +57,9 @@ class XFetcher {
         let newFollowers = 1;
         let views = scraped.reach; // 120
         let engagement = scraped.engagement; // 5
-        let status = 'connected';
-        let isFallback = false;
+        const hasToken = !!(this.bearerToken && this.bearerToken.trim());
+        let status = hasToken ? 'connected' : 'unauthenticated';
+        let isFallback = !hasToken;
         if (this.bearerToken && this.bearerToken.trim()) {
             try {
                 const cleanUser = this.username.replace('@', '');
@@ -95,9 +96,10 @@ class XFetcher {
             contentViews: views,
             engagement,
             status,
-            isFallback
+            isFallback,
+            dataSource: hasToken && !isFallback ? 'OFFICIAL_API' : 'PUBLIC_PROBE',
+            dataQuality: hasToken && !isFallback ? 'VERIFIED_LIVE' : 'ESTIMATED'
         });
     }
 }
 exports.XFetcher = XFetcher;
-//# sourceMappingURL=XFetcher.js.map

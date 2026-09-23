@@ -15,9 +15,9 @@ class InstagramFetcher {
     async testConnection() {
         if (!this.accessToken || !this.accessToken.trim()) {
             return {
-                status: 'OK',
+                status: 'ERROR',
                 platform: 'instagram',
-                message: 'Connected via Live Public Web Probe (Verified Handle: @epapunjablive). Add IG_ACCESS_TOKEN for Instagram Graph API.'
+                message: 'Instagram Graph API access token not configured (IG_ACCESS_TOKEN is missing). Please configure a valid token in Settings.'
             };
         }
         try {
@@ -56,8 +56,9 @@ class InstagramFetcher {
         let engagement = 1260;
         let linkClicks = 124;
         let visits = 602;
-        let status = 'connected';
-        let isFallback = false;
+        const hasToken = !!(this.accessToken && this.accessToken.trim());
+        let status = hasToken ? 'connected' : 'unauthenticated';
+        let isFallback = !hasToken;
         if (this.accessToken && this.accessToken.trim()) {
             try {
                 const url = `${this.baseUrl}/${encodeURIComponent(this.userId)}?fields=username,followers_count,media_count&access_token=${encodeURIComponent(this.accessToken)}`;
@@ -144,4 +145,3 @@ class InstagramFetcher {
     }
 }
 exports.InstagramFetcher = InstagramFetcher;
-//# sourceMappingURL=InstagramFetcher.js.map

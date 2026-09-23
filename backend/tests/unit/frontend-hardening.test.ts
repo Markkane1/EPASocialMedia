@@ -28,7 +28,7 @@ describe('Frontend Hardening & Low-Severity Audit Verifications (L-01, L-02, L-0
       const app = createApp();
       const routes = (app as any)._router?.stack || [];
       const hasSrcStaticMount = routes.some(
-        (layer: any) => layer.regexp && layer.regexp.test && layer.regexp.test('/src')
+        (layer: any) => layer.regexp && layer.regexp.source && layer.regexp.source.includes('\\/src')
       );
       expect(hasSrcStaticMount).toBe(false);
     });

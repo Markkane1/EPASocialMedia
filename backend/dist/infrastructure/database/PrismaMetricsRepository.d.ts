@@ -4,7 +4,6 @@ import { ExecutiveSummary } from '../../domain/entities/ExecutiveSummary';
 import { SyncLog } from '../../domain/entities/SyncLog';
 export declare class PrismaMetricsRepository implements IMetricsRepository {
     private inMemoryMetrics;
-    private inMemorySummary;
     private inMemoryLogs;
     private lastSyncTime;
     constructor();
@@ -14,4 +13,13 @@ export declare class PrismaMetricsRepository implements IMetricsRepository {
     getRecentSyncLogs(limit?: number): Promise<SyncLog[]>;
     addSyncLog(log: SyncLog): Promise<void>;
     getLastSyncTimestamp(): Promise<string>;
+    /**
+     * Applies data retention policy, purging metric records, summaries, and logs
+     * older than retentionDays (defaults to 90 days). (M-19, M-20, M-21)
+     */
+    applyRetentionPolicy(retentionDays?: number): Promise<{
+        deletedMetrics: number;
+        deletedSummaries: number;
+        deletedLogs: number;
+    }>;
 }

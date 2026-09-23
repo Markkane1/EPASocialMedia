@@ -6,18 +6,14 @@ const LiveWebScraperService_1 = require("./LiveWebScraperService");
 class TikTokFetcher {
     platformKey = 'tiktok';
     username;
-    clientKey;
-    clientSecret;
-    constructor(username, clientKey, clientSecret) {
+    constructor(username) {
         this.username = username || process.env.TIKTOK_USERNAME || 'epapunjab';
-        this.clientKey = clientKey || process.env.TIKTOK_CLIENT_KEY || '';
-        this.clientSecret = clientSecret || process.env.TIKTOK_CLIENT_SECRET || '';
     }
     async testConnection() {
         return {
-            status: 'OK',
+            status: 'ERROR',
             platform: 'tiktok',
-            message: `Verified live TikTok profile "@${this.username.replace('@', '')}" via public web probe`
+            message: 'Official TikTok API integration not configured (Client Key/Secret required). Falling back to unauthenticated public probe.'
         };
     }
     async fetchMetrics() {
@@ -26,8 +22,8 @@ class TikTokFetcher {
         let newFollowers = 0;
         let views = scraped.reach; // 500
         let engagement = scraped.engagement; // 4 likes
-        let status = 'connected';
-        let isFallback = false;
+        let status = 'unauthenticated';
+        let isFallback = true;
         return new PlatformMetric_1.PlatformMetric({
             platform: 'tiktok',
             name: 'epapunjab',
@@ -41,9 +37,10 @@ class TikTokFetcher {
             contentViews: views,
             engagement,
             status,
-            isFallback
+            isFallback,
+            dataSource: 'PUBLIC_PROBE',
+            dataQuality: 'ESTIMATED'
         });
     }
 }
 exports.TikTokFetcher = TikTokFetcher;
-//# sourceMappingURL=TikTokFetcher.js.map

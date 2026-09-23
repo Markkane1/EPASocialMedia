@@ -17,4 +17,3 @@ class SyncController {
     }
 }
 exports.SyncController = SyncController;
-//# sourceMappingURL=SyncController.js.map

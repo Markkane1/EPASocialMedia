@@ -15,9 +15,9 @@ class FacebookFetcher {
     async testConnection() {
         if (!this.accessToken || !this.accessToken.trim()) {
             return {
-                status: 'OK',
+                status: 'ERROR',
                 platform: 'facebook',
-                message: 'Connected via Live Public Web Probe (Verified Page: EnvironmentProtectionAgencyPunjab). Add FB_ACCESS_TOKEN for Meta Graph API.'
+                message: 'Meta API access token not configured (FB_ACCESS_TOKEN is missing). Please configure a valid Graph API Page token in Settings.'
             };
         }
         try {
@@ -49,7 +49,6 @@ class FacebookFetcher {
     async fetchMetrics() {
         // Default base metrics from verified Meta Suite 28d reporting
         let followers = 26416;
-        let watchTime = 0;
         let newFollowers = 1900;
         let views = 1800000;
         let viewers = 532100;
@@ -58,8 +57,9 @@ class FacebookFetcher {
         let engagement = 9400;
         let linkClicks = 1600;
         let visits = 22800;
-        let status = 'connected';
-        let isFallback = false;
+        const hasToken = !!(this.accessToken && this.accessToken.trim());
+        let status = hasToken ? 'connected' : 'unauthenticated';
+        let isFallback = !hasToken;
         if (this.accessToken && this.accessToken.trim()) {
             try {
                 const pageUrl = `${this.baseUrl}/${encodeURIComponent(this.pageId)}?fields=name,followers_count,fan_count,access_token&access_token=${encodeURIComponent(this.accessToken)}`;
@@ -85,9 +85,6 @@ class FacebookFetcher {
                                                     visits = latestVal;
                                                 if (item.name === 'page_daily_follows_unique')
                                                     newFollowers = latestVal;
-                                                if (item.name === 'page_post_engagements' && latestVal > 0) {
-                                                    // Meta post engagements count can augment interaction records
-                                                }
                                             }
                                         }
                                     }
@@ -111,8 +108,8 @@ class FacebookFetcher {
             handle: 'EnvironmentProtectionAgencyPunjab',
             url: 'https://www.facebook.com/EnvironmentProtectionAgencyPunjab/',
             followers,
-            watchTime: watchTime > 0 ? watchTime : null,
-            watchTimeHrs: watchTime > 0 ? watchTime : null,
+            watchTime: null,
+            watchTimeHrs: null,
             newFollowers,
             views,
             contentViews: views,
@@ -139,4 +136,3 @@ class FacebookFetcher {
     }
 }
 exports.FacebookFetcher = FacebookFetcher;
-//# sourceMappingURL=FacebookFetcher.js.map

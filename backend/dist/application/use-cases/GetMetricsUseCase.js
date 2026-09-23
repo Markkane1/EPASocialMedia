@@ -1,17 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GetMetricsUseCase = void 0;
+const PlatformMetric_1 = require("../../domain/entities/PlatformMetric");
 const ExecutiveSummary_1 = require("../../domain/entities/ExecutiveSummary");
 class GetMetricsUseCase {
     metricsRepo;
-    static PERIOD_MULTIPLIERS = {
-        '7d': 7 / 28,
-        '28d': 1.0,
-        'month': 30 / 28,
-        '90d': 90 / 28,
-        'ytd': 260 / 28,
-        'all': 365 / 28
-    };
     constructor(metricsRepo) {
         this.metricsRepo = metricsRepo;
     }
@@ -70,8 +63,15 @@ class GetMetricsUseCase {
         const is7d = days === 7;
         for (const [key, metric] of Object.entries(basePlatforms)) {
             const scaled = metric.scaleForPeriod(multiplier, is7d);
-            scaledPlatforms[key] = scaled;
-            scaledList.push(scaled);
+            const filteredTrends = scaled.historicalTrends && scaled.historicalTrends.length > 0
+                ? scaled.historicalTrends.filter(pt => (!fromDateStr || pt.date >= fromDateStr) && (!toDateStr || pt.date <= toDateStr))
+                : scaled.historicalTrends;
+            const adjustedMetric = new PlatformMetric_1.PlatformMetric({
+                ...scaled,
+                historicalTrends: (filteredTrends && filteredTrends.length > 0) ? filteredTrends : scaled.historicalTrends
+            });
+            scaledPlatforms[key] = adjustedMetric;
+            scaledList.push(adjustedMetric);
         }
         const summary = ExecutiveSummary_1.ExecutiveSummary.fromPlatformMetrics(scaledList);
         const serializedPlatforms = {};
@@ -90,9 +90,10 @@ class GetMetricsUseCase {
             platforms: serializedPlatforms,
             last_sync: lastSync,
             sync_status: 'synced',
-            sync_logs: recentLogs.map(l => l.toJSON())
+            sync_logs: recentLogs.map(l => l.toJSON()),
+            isEstimated: period !== '28d',
+            provenance: period === '28d' ? 'DIRECT_SNAPSHOT' : 'ESTIMATED_PERIOD_SCALING'
         };
     }
 }
 exports.GetMetricsUseCase = GetMetricsUseCase;
-//# sourceMappingURL=GetMetricsUseCase.js.map

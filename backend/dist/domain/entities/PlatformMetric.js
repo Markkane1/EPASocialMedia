@@ -20,6 +20,9 @@ class PlatformMetric {
     engagement;
     status;
     isFallback;
+    dataSource;
+    dataQuality;
+    retrievedAt;
     handle;
     url;
     lastUpdated;
@@ -27,11 +30,11 @@ class PlatformMetric {
         this.platform = props.platform;
         this.name = props.name;
         this.followers = Math.max(0, props.followers);
-        this.watchTime = props.watchTime;
-        this.watchTimeHrs = props.watchTimeHrs;
-        this.newFollowers = Math.max(0, props.newFollowers);
+        this.watchTime = props.watchTime ?? null;
+        this.watchTimeHrs = props.watchTimeHrs ?? null;
+        this.newFollowers = Math.max(0, props.newFollowers ?? 0);
         this.views = Math.max(0, props.views);
-        this.contentViews = Math.max(0, props.contentViews || props.views);
+        this.contentViews = Math.max(0, props.contentViews ?? props.views);
         this.impressions = Math.max(0, props.impressions ?? (props.contentViews || props.views));
         this.viewers = Math.max(0, props.viewers ?? Math.round(this.views * 0.3));
         this.reach = Math.max(0, props.reach ?? this.viewers);
@@ -42,9 +45,30 @@ class PlatformMetric {
         this.engagement = Math.max(0, props.engagement);
         this.status = props.status;
         this.isFallback = props.isFallback;
+        this.lastUpdated = props.lastUpdated || new Date().toISOString();
+        this.retrievedAt = props.retrievedAt || this.lastUpdated;
+        this.dataSource = props.dataSource || (props.isFallback ? 'FALLBACK_STATIC' : 'OFFICIAL_API');
+        this.dataQuality = props.dataQuality || (props.isFallback ? 'FALLBACK' : 'VERIFIED_LIVE');
         this.handle = props.handle;
         this.url = props.url;
-        this.lastUpdated = props.lastUpdated || new Date().toISOString();
+    }
+    /**
+     * Checks if metric data is older than the configured threshold (default 24 hours)
+     */
+    isStale(maxAgeHours = 24) {
+        const ageMs = Date.now() - new Date(this.retrievedAt).getTime();
+        return isNaN(ageMs) || ageMs > maxAgeHours * 60 * 60 * 1000;
+    }
+    /**
+     * Returns human-readable staleness status category
+     */
+    getStalenessStatus(maxAgeHours = 24) {
+        const ageMs = Date.now() - new Date(this.retrievedAt).getTime();
+        if (isNaN(ageMs) || ageMs > maxAgeHours * 60 * 60 * 1000)
+            return 'STALE';
+        if (ageMs > 60 * 60 * 1000)
+            return 'CACHED';
+        return 'FRESH';
     }
     /**
      * Scales flow metrics based on reporting period multiplier.
@@ -81,7 +105,10 @@ class PlatformMetric {
             visits: scaledVisits,
             watchTime: scaledWt,
             watchTimeHrs: scaledWt,
-            engagement: scaledEngagement
+            engagement: scaledEngagement,
+            dataSource: this.dataSource,
+            dataQuality: multiplier === 1.0 && !is7d ? this.dataQuality : 'ESTIMATED',
+            retrievedAt: this.retrievedAt
         });
     }
     toJSON() {
@@ -104,6 +131,11 @@ class PlatformMetric {
             engagement: this.engagement,
             status: this.status,
             is_fallback: this.isFallback,
+            data_source: this.dataSource,
+            data_quality: this.isStale() ? 'STALE' : this.dataQuality,
+            retrieved_at: this.retrievedAt,
+            is_stale: this.isStale(),
+            staleness_label: this.getStalenessStatus(),
             handle: this.handle,
             url: this.url,
             last_updated: this.lastUpdated
@@ -111,4 +143,3 @@ class PlatformMetric {
     }
 }
 exports.PlatformMetric = PlatformMetric;
-//# sourceMappingURL=PlatformMetric.js.map

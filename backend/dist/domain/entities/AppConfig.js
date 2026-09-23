@@ -25,13 +25,6 @@ class AppConfig {
         }
         return masked;
     }
-    getAllRaw() {
-        const raw = {};
-        for (const [key, item] of this.configMap.entries()) {
-            raw[key] = item.value || '';
-        }
-        return raw;
-    }
     maskValue(val) {
         if (!val || val.length < 8) {
             return '••••••••';
@@ -40,4 +33,3 @@ class AppConfig {
     }
 }
 exports.AppConfig = AppConfig;
-//# sourceMappingURL=AppConfig.js.map

@@ -49,20 +49,18 @@ function createApp() {
     app.use(securityHeaders_1.securityHeaders);
     // 2. Strict Whitelist-Enforced CORS
     app.use((0, securityHeaders_1.createCorsMiddleware)());
-    // 3. Body Parsing & Logging
-    app.use(express_1.default.json());
-    app.use(express_1.default.urlencoded({ extended: true }));
+    // 3. Body Parsing with Strict Payload Size Limits (M-03)
+    app.use(express_1.default.json({ limit: '10kb' }));
+    app.use(express_1.default.urlencoded({ extended: false, limit: '10kb' }));
     app.use(requestLogger_1.requestLogger);
     // 4. CSRF Defense for State-Changing Requests
     app.use(securityHeaders_1.csrfProtection);
-    // Mount API Endpoints
+    // Mount API Endpoints with Anti-Caching for Sensitive Operations Data (M-04)
     const apiRouter = (0, apiRouter_1.createApiRouter)();
-    app.use('/api', apiRouter);
-    // Serve Frontend Assets (Clean separation: frontend static distribution)
+    app.use('/api', securityHeaders_1.apiNoCache, apiRouter);
+    // Serve Frontend Assets (L-01 Hardened: Only compiled /dist and public assets served; /src unexposed)
     const frontendPublicDir = path.resolve(__dirname, '../../frontend/public');
-    const frontendSrcDir = path.resolve(__dirname, '../../frontend/src');
     app.use(express_1.default.static(frontendPublicDir));
-    app.use('/src', express_1.default.static(frontendSrcDir));
     // Default SPA route
     app.get('/', (req, res) => {
         res.sendFile(path.join(frontendPublicDir, 'index.html'));
@@ -71,4 +69,3 @@ function createApp() {
     app.use(errorHandler_1.errorHandler);
     return app;
 }
-//# sourceMappingURL=app.js.map

@@ -20,4 +20,3 @@ class MetricsController {
     }
 }
 exports.MetricsController = MetricsController;
-//# sourceMappingURL=MetricsController.js.map

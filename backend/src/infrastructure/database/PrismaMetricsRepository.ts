@@ -1,5 +1,6 @@
 import { IMetricsRepository } from '../../domain/repositories/IMetricsRepository';
 import { PlatformMetric } from '../../domain/entities/PlatformMetric';
+import { ExecutiveSummary } from '../../domain/entities/ExecutiveSummary';
 import { SyncLog } from '../../domain/entities/SyncLog';
 import { PrismaClientSingleton } from './PrismaClientSingleton';
 import { PlatformStatus } from '@prisma/client';

@@ -37,28 +37,27 @@ const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const app_1 = require("./app");
 const PrismaClientSingleton_1 = require("./infrastructure/database/PrismaClientSingleton");
+const AuthService_1 = require("./infrastructure/auth/AuthService");
 const PORT = parseInt(process.env.PORT || '8080', 10);
+const HOST = process.env.HOST || '0.0.0.0';
 async function bootstrap() {
-    console.log('='.repeat(60));
-    console.log('EPA PUNJAB SOCIAL MEDIA DASHBOARD — BACKEND SERVICE');
-    console.log('Clean Architecture | PostgreSQL Persistence | Prisma ORM');
-    console.log('='.repeat(60));
+    // Validate production security configuration
+    AuthService_1.AuthService.validateStartupConfig();
     // Verify Database connectivity asynchronously
     await PrismaClientSingleton_1.PrismaClientSingleton.checkConnection();
     const app = (0, app_1.createApp)();
-    const server = app.listen(PORT, '127.0.0.1', () => {
-        console.log(`[SERVER] Backend service active on http://127.0.0.1:${PORT}`);
-        console.log(`[SERVER] API Root: http://127.0.0.1:${PORT}/api/metrics`);
+    const server = app.listen(PORT, HOST, () => {
+        console.log(`[SERVER] Backend service active on http://${HOST}:${PORT}`);
+        console.log(`[SERVER] API Root: http://${HOST}:${PORT}/api/metrics`);
     });
     server.on('error', (err) => {
         if (err.code === 'EADDRINUSE') {
-            console.warn(`[SERVER] Port ${PORT} busy, attempting fallback to 8081...`);
-            app.listen(8081, '127.0.0.1', () => {
-                console.log(`[SERVER] Backend service active on fallback http://127.0.0.1:8081`);
-            });
+            console.error(`[FATAL] Port ${PORT} is already in use. Refusing to run on arbitrary fallback port in production.`);
+            process.exit(1);
         }
         else {
             console.error('[SERVER] Fatal server error:', err);
+            process.exit(1);
         }
     });
     // Graceful shutdown handling
@@ -83,4 +82,3 @@ async function bootstrap() {
 if (require.main === module) {
     bootstrap();
 }
-//# sourceMappingURL=server.js.map

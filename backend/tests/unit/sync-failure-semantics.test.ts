@@ -29,6 +29,7 @@ describe('Sync Failure Semantics & Preservation (Item 12, H-23, M-16, M-17, M-18
 
     mockMetricsRepo = {
       getPlatformMetrics: jest.fn().mockResolvedValue({ ...initialMetrics }),
+      getAllPlatformMetrics: jest.fn().mockResolvedValue({ ...initialMetrics }),
       savePlatformMetrics: jest.fn().mockResolvedValue(undefined),
       getExecutiveSummary: jest.fn().mockResolvedValue(null),
       saveExecutiveSummary: jest.fn().mockResolvedValue(undefined),

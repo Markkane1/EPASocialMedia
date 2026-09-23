@@ -8,8 +8,8 @@ export class PrismaUserRepository implements IUserRepository {
   private inMemoryUsers: Map<string, User> = new Map();
 
   constructor() {
-    const adminPass = process.env.DEFAULT_ADMIN_PASSWORD || 'TestAdmin@2026!';
-    const execPass = process.env.DEFAULT_EXECUTIVE_PASSWORD || 'TestExecutive@2026!';
+    const adminPass = process.env.DEFAULT_ADMIN_PASSWORD || 'Admin@EPAPunjab2026!';
+    const execPass = process.env.DEFAULT_EXECUTIVE_PASSWORD || 'Executive@EPAPunjab2026!';
 
     // Seed default administrative and executive accounts
     const adminUser = new User({

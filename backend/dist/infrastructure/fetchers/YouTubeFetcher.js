@@ -6,9 +6,9 @@ class YouTubeFetcher {
     platformKey = 'youtube';
     async testConnection() {
         return {
-            status: 'OK',
+            status: 'ERROR',
             platform: 'youtube',
-            message: 'No YouTube channel launched yet by EPA Punjab (Channel Pending Launch).'
+            message: 'No YouTube channel or API key configured for EPA Punjab (Channel Pending Launch).'
         };
     }
     async fetchMetrics() {
@@ -30,4 +30,3 @@ class YouTubeFetcher {
     }
 }
 exports.YouTubeFetcher = YouTubeFetcher;
-//# sourceMappingURL=YouTubeFetcher.js.map

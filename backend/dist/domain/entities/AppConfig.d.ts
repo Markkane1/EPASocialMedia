@@ -9,6 +9,5 @@ export declare class AppConfig {
     get(key: string): string;
     set(key: string, value: string, isSensitive?: boolean): void;
     getAllMasked(): Record<string, string>;
-    getAllRaw(): Record<string, string>;
     private maskValue;
 }

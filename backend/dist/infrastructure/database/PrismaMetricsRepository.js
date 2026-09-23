@@ -2,14 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaMetricsRepository = void 0;
 const PlatformMetric_1 = require("../../domain/entities/PlatformMetric");
-const ExecutiveSummary_1 = require("../../domain/entities/ExecutiveSummary");
 const SyncLog_1 = require("../../domain/entities/SyncLog");
 const PrismaClientSingleton_1 = require("./PrismaClientSingleton");
 const facebookHistoricalData_1 = require("../data/facebookHistoricalData");
 const instagramHistoricalData_1 = require("../data/instagramHistoricalData");
 class PrismaMetricsRepository {
     inMemoryMetrics = {};
-    inMemorySummary;
     inMemoryLogs = [];
     lastSyncTime = new Date().toISOString();
     constructor() {
@@ -163,7 +161,6 @@ class PrismaMetricsRepository {
                 isFallback: true
             })
         };
-        this.inMemorySummary = ExecutiveSummary_1.ExecutiveSummary.fromPlatformMetrics(Object.values(this.inMemoryMetrics));
         this.inMemoryLogs.push(new SyncLog_1.SyncLog({
             timestamp: this.lastSyncTime,
             status: 'initialized',
@@ -202,6 +199,9 @@ class PrismaMetricsRepository {
                             engagement: latest ? Number(latest.engagement) : 0,
                             status: p.status.toLowerCase() || 'connected',
                             isFallback: p.isFallback,
+                            dataSource: 'DATABASE_SNAPSHOT',
+                            dataQuality: p.isFallback ? 'FALLBACK' : 'VERIFIED_LIVE',
+                            retrievedAt: latest ? latest.recordedAt.toISOString() : undefined,
                             lastUpdated: latest?.recordedAt.toISOString()
                         });
                     }
@@ -215,43 +215,49 @@ class PrismaMetricsRepository {
         return { ...this.inMemoryMetrics };
     }
     async savePlatformMetrics(metrics) {
+        if (!metrics || Object.keys(metrics).length === 0) {
+            console.warn('[METRICS_REPO] Refusing to overwrite metrics with empty dataset.');
+            return;
+        }
         this.inMemoryMetrics = { ...metrics };
         this.lastSyncTime = new Date().toISOString();
         const isConnected = await PrismaClientSingleton_1.PrismaClientSingleton.checkConnection();
         if (isConnected) {
             try {
                 const prisma = PrismaClientSingleton_1.PrismaClientSingleton.getInstance();
-                for (const [slug, m] of Object.entries(metrics)) {
-                    const platform = await prisma.platform.upsert({
-                        where: { slug },
-                        update: {
-                            name: m.name,
-                            handle: m.handle,
-                            url: m.url,
-                            status: m.status.toUpperCase(),
-                            isFallback: m.isFallback
-                        },
-                        create: {
-                            slug,
-                            name: m.name,
-                            handle: m.handle,
-                            url: m.url,
-                            status: m.status.toUpperCase(),
-                            isFallback: m.isFallback
-                        }
-                    });
-                    await prisma.metricRecord.create({
-                        data: {
-                            platformId: platform.id,
-                            period: '28d',
-                            followers: BigInt(m.followers),
-                            views: BigInt(m.views),
-                            watchTimeHrs: m.watchTimeHrs,
-                            newFollowers: m.newFollowers,
-                            engagement: BigInt(m.engagement)
-                        }
-                    });
-                }
+                await prisma.$transaction(async (tx) => {
+                    for (const [slug, m] of Object.entries(metrics)) {
+                        const platform = await tx.platform.upsert({
+                            where: { slug },
+                            update: {
+                                name: m.name,
+                                handle: m.handle,
+                                url: m.url,
+                                status: m.status.toUpperCase(),
+                                isFallback: m.isFallback
+                            },
+                            create: {
+                                slug,
+                                name: m.name,
+                                handle: m.handle,
+                                url: m.url,
+                                status: m.status.toUpperCase(),
+                                isFallback: m.isFallback
+                            }
+                        });
+                        await tx.metricRecord.create({
+                            data: {
+                                platformId: platform.id,
+                                period: '28d',
+                                followers: BigInt(m.followers),
+                                views: BigInt(m.views),
+                                watchTimeHrs: m.watchTimeHrs,
+                                newFollowers: m.newFollowers,
+                                engagement: BigInt(m.engagement)
+                            }
+                        });
+                    }
+                });
             }
             catch (err) {
                 console.error('[DATABASE] Error persisting metrics to PostgreSQL:', err);
@@ -259,7 +265,6 @@ class PrismaMetricsRepository {
         }
     }
     async saveExecutiveSummary(period, summary) {
-        this.inMemorySummary = summary;
         const isConnected = await PrismaClientSingleton_1.PrismaClientSingleton.checkConnection();
         if (isConnected) {
             try {
@@ -331,6 +336,40 @@ class PrismaMetricsRepository {
     async getLastSyncTimestamp() {
         return this.lastSyncTime;
     }
+    /**
+     * Applies data retention policy, purging metric records, summaries, and logs
+     * older than retentionDays (defaults to 90 days). (M-19, M-20, M-21)
+     */
+    async applyRetentionPolicy(retentionDays = 90) {
+        const isConnected = await PrismaClientSingleton_1.PrismaClientSingleton.checkConnection();
+        if (!isConnected) {
+            return { deletedMetrics: 0, deletedSummaries: 0, deletedLogs: 0 };
+        }
+        try {
+            const prisma = PrismaClientSingleton_1.PrismaClientSingleton.getInstance();
+            const cutoffDate = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+            const [metricsRes, summariesRes, logsRes] = await prisma.$transaction([
+                prisma.metricRecord.deleteMany({
+                    where: { recordedAt: { lt: cutoffDate } }
+                }),
+                prisma.executiveSummary.deleteMany({
+                    where: { calculatedAt: { lt: cutoffDate } }
+                }),
+                prisma.syncAuditLog.deleteMany({
+                    where: { timestamp: { lt: cutoffDate } }
+                })
+            ]);
+            console.log(`[DATABASE] Retention policy applied (${retentionDays}d cutoff): purged ${metricsRes.count} metrics, ${summariesRes.count} summaries, ${logsRes.count} logs.`);
+            return {
+                deletedMetrics: metricsRes.count,
+                deletedSummaries: summariesRes.count,
+                deletedLogs: logsRes.count
+            };
+        }
+        catch (err) {
+            console.error('[DATABASE] Error applying retention policy:', err);
+            return { deletedMetrics: 0, deletedSummaries: 0, deletedLogs: 0 };
+        }
+    }
 }
 exports.PrismaMetricsRepository = PrismaMetricsRepository;
-//# sourceMappingURL=PrismaMetricsRepository.js.map
