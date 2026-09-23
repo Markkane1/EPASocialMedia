@@ -1,120 +1,128 @@
-# EPA Punjab · Social Media Executive Operations Dashboard
+# EPA Punjab · Social Media Operations Dashboard
 
-Enterprise Social Media Operations Dashboard engineered exclusively for the **Environment Protection Agency (EPA), Government of the Punjab**. Built with **Clean Architecture**, a decoupled **Frontend & Backend**, **PostgreSQL** persistence driven by **Prisma ORM**, Role-Based Access Control (**RBAC**), interactive date range selection, and automated testing suites.
-
----
-
-## 🏛 Clean Architecture Overview
-
-This codebase adheres strictly to Domain-Driven Design (DDD) and Clean Architecture principles:
-- **`backend/`**: Node.js & TypeScript service organized into:
-  - `domain/`: Pure business entities (`PlatformMetric`, `ExecutiveSummary`, `User`, `AppConfig`) and repository interfaces.
-  - `application/`: Application use cases (`GetMetricsUseCase`, `SyncPlatformsUseCase`, `AuthUseCase`, `ConfigUseCase`).
-  - `infrastructure/`: External adapters (Prisma ORM, PostgreSQL, native PBKDF2/HMAC `AuthService`, social API fetchers, and fallback scraper).
-  - `interfaces/http/`: Express presentation layer (Controllers, RBAC `authGuard` middleware, request logger, API routes).
-- **`backend/prisma/`**: PostgreSQL data model, schema definitions (`schema.prisma`), and baseline database seeder (`seed.ts`).
-- **`frontend/`**: Decoupled Single Page Application (SPA) with modular ES6 components, centralized reactive state store (`dashboardState.js`), and SPA hash router (`#dashboard`, `#platform/:id`, `#settings`).
-- **`tests/`**: Automated test suite containing Jest unit and integration tests, plus Playwright browser end-to-end tests.
-- **`docker/`**: Multi-container Docker Compose definition for PostgreSQL 16 and the backend service.
-
-For complete architectural details, see [ARCHITECTURE.md](docs/ARCHITECTURE.md).
+An internal enterprise dashboard for monitoring and managing the official social media presence of the **Environment Protection Agency (EPA), Government of the Punjab**.
 
 ---
 
-## 🔐 Pre-Configured Access Roles (RBAC)
+## 📦 Tech Stack
 
-The system enforces cryptographic Role-Based Access Control:
+| Layer | Technology |
+|---|---|
+| Backend | Node.js · TypeScript · Express |
+| Database | PostgreSQL · Prisma ORM |
+| Frontend | Vanilla ES6 SPA |
+| Auth | RBAC · PBKDF2/HMAC |
+| Testing | Jest · Playwright |
+| Infrastructure | Docker · Docker Compose |
 
-| Role | Username | Default Password | Permissions |
-|---|---|---|---|
-| **Administrator (`ADMIN`)** | `admin` | `Admin@EPAPunjab2026!` | Access API Settings, manage OAuth tokens, execute manual platform synchronizations |
-| **Executive Viewer (`EXECUTIVE`)** | `executive` | `Executive@EPAPunjab2026!` | View Executive Overview, filter dynamic date ranges, inspect platform master-detail pages |
+---
+
+## 🏗 Project Structure
+
+```
+├── backend/       # Node.js API service (Clean Architecture)
+├── frontend/      # Decoupled Single Page Application
+├── tests/         # Unit, integration & E2E test suites
+├── docker/        # Docker Compose configuration
+└── docs/          # Architecture & technical documentation
+```
+
+For full architectural details, see [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Prerequisites
-- **Node.js**: v18+ (v22 recommended)
-- **PostgreSQL**: v14+ (or Docker)
+### Prerequisites
+- **Node.js** v18+ (v22 recommended)
+- **PostgreSQL** v14+ (or Docker)
 - **npm**
 
-### 2. Backend Setup
+### 1. Install Dependencies
+
 ```bash
-# Navigate to backend directory
 cd backend
-
-# Install dependencies
 npm install
-
-# Generate Prisma Client
 npx prisma generate
 ```
 
-### 3. Database Configuration (PostgreSQL)
-Configure your database connection string in `.env`:
-```env
-DATABASE_URL="postgresql://postgres:your_password@localhost:5432/epa_social_dashboard?schema=public"
+### 2. Environment Configuration
+
+Copy the example env file and fill in your values:
+
+```bash
+cp .env.example .env
 ```
 
-Push schema and seed baseline figures:
-```bash
-# Create database tables via Prisma
-npx prisma db push
+> **Never commit `.env` to version control.**
 
-# Seed official EPA baseline data and user credentials
+### 3. Database Setup
+
+```bash
+npx prisma db push
 npm run prisma:seed
 ```
-*(Note: If PostgreSQL is temporarily unreachable during local dev, the backend automatically activates a resilient in-memory fallback store with full functionality).*
 
-### 4. Running the Application
+> If PostgreSQL is unreachable during local development, the backend automatically falls back to an in-memory store with full functionality.
 
-You can now run commands directly from the **project root**:
+### 4. Run
 
-#### Development Mode (with Live Reload):
+**Development (with live reload):**
 ```bash
 npm run dev
 ```
-*(Or inside `backend/`: `npm run dev`)*
 
-The server will start on `http://127.0.0.1:8080`.
-The frontend dashboard is served directly at `http://127.0.0.1:8080/`.
-
-#### Production Build & Start:
+**Production:**
 ```bash
 npm run build
 npm start
 ```
 
----
-
-## 🧪 Running Automated Tests
-
-### Backend Unit & Integration Tests (Jest)
-```bash
-cd backend
-npm test
-```
-
-### End-to-End Browser Tests (Playwright)
-```bash
-python tests/e2e/run_e2e.py
-```
+The application will be available at `http://127.0.0.1:8080`.
 
 ---
 
-## 📊 6-Platform Coverage
+## 🧪 Tests
 
-The dashboard monitors and integrates direct operational data across the official EPA Punjab channels:
+**Unit & Integration (Jest):**
+```bash
+cd backend && npm test
+```
 
-1. **Facebook**: [`facebook.com/EnvironmentProtectionAgencyPunjab`](https://www.facebook.com/EnvironmentProtectionAgencyPunjab/) — `26,409` followers
-2. **Instagram**: [`instagram.com/epapunjablive`](https://www.instagram.com/epapunjablive) — `2,754` followers · `1,306` posts
-3. **TikTok**: [`tiktok.com/@epapunjab`](https://www.tiktok.com/@epapunjab) — `5` published videos · `4` likes
-4. **LinkedIn**: [`pk.linkedin.com/company/environment-protection-agency-punjab`](https://pk.linkedin.com/company/environment-protection-agency-punjab) — `609` followers
-5. **X (Twitter)**: [`x.com/@epapunjab`](https://x.com/@epapunjab) — `5` posts · `1` follower
-6. **YouTube**: *Official channel pending launch*
+**End-to-End (Playwright):**
+```bash
+npm run test:e2e
+```
+
+---
+
+## 🔐 Access & Roles
+
+The system enforces Role-Based Access Control (RBAC) with two roles:
+
+| Role | Capabilities |
+|---|---|
+| **Administrator** | API settings, OAuth token management, manual platform sync |
+| **Executive Viewer** | Dashboard overview, date range filtering, platform detail pages |
+
+> Default credentials are configured during the seed step. Change them immediately after first login.
+
+---
+
+## 📊 Platform Coverage
+
+The dashboard tracks EPA Punjab's official presence across **6 social media platforms**:
+
+- Facebook
+- Instagram
+- TikTok
+- LinkedIn
+- X (Twitter)
+- YouTube
 
 ---
 
 ## 📜 License
-Government of the Punjab — Environmental Protection Agency (EPA). Official Use Only.
+
+Government of the Punjab — Environment Protection Agency (EPA).  
+**Official Internal Use Only. All rights reserved.**
