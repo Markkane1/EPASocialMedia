@@ -1,0 +1,14 @@
+# Docker build context exclusions (L-02 Security Hardening)
+.git
+.gitignore
+.github
+*.map
+**/*.map
+.env*
+!.env.example
+node_modules
+dist/*.map
+backend/dist/*.map
+coverage
+tests
+*.log

@@ -6,6 +6,7 @@
     "dev": "npm --prefix backend run dev",
     "start": "npm --prefix backend start",
     "build": "npm --prefix backend run build",
+    "build:frontend": "npm --prefix backend run build:frontend",
     "test": "npm --prefix backend test",
     "test:e2e": "python tests/e2e/run_e2e.py"
   },

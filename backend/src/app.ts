@@ -33,12 +33,9 @@ export function createApp(): Express {
   const apiRouter = createApiRouter();
   app.use('/api', apiNoCache, apiRouter);
 
-  // Serve Frontend Assets (Clean separation: frontend static distribution)
+  // Serve Frontend Assets (L-01 Hardened: Only compiled /dist and public assets served; /src unexposed)
   const frontendPublicDir = path.resolve(__dirname, '../../frontend/public');
-  const frontendSrcDir = path.resolve(__dirname, '../../frontend/src');
-
   app.use(express.static(frontendPublicDir));
-  app.use('/src', express.static(frontendSrcDir));
 
   // Default SPA route
   app.get('/', (req, res) => {

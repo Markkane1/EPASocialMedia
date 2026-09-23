@@ -25,12 +25,12 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
   res.setHeader('Cross-Origin-Resource-Policy', 'same-origin');
 
-  // Tailored Content Security Policy (allows local assets and official Google fonts)
+  // Tailored Content Security Policy (L-09 Hardened: self-hosted fonts, no external CDN dependencies)
   const csp = [
     "default-src 'self'",
     "script-src 'self'",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com data:",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data:",
     "img-src 'self' data:",
     "connect-src 'self'",
     "frame-ancestors 'none'",

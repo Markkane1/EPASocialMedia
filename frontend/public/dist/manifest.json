@@ -1,0 +1,15 @@
+{
+  "buildDate": "2026-09-23T10:28:56.197Z",
+  "assets": {
+    "style.css": {
+      "path": "/dist/style.css",
+      "bytes": 10750,
+      "sha256": "6310aef42164e6722210f40e2901467def8f5ef8d0b477fde0444a4764796a5f"
+    },
+    "bundle.js": {
+      "path": "/dist/bundle.js",
+      "bytes": 145125,
+      "sha256": "446b7686359136a4f16177a3e65327430c867178f9da219a9c37e6e6a213024d"
+    }
+  }
+}

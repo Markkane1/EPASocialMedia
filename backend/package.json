@@ -4,7 +4,8 @@
   "description": "Enterprise Clean Architecture Backend for EPA Punjab Social Media Executive Operations Dashboard",
   "main": "dist/server.js",
   "scripts": {
-    "build": "tsc",
+    "build:frontend": "node scripts/build-frontend.js",
+    "build": "node scripts/build-frontend.js && tsc",
     "start": "node dist/server.js",
     "dev": "tsx watch src/server.ts",
     "test": "jest --detectOpenHandles --forceExit",
