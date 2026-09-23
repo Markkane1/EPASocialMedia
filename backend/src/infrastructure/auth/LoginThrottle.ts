@@ -10,9 +10,25 @@ export class LoginThrottle {
   private static readonly ATTEMPT_WINDOW_MS = 15 * 60 * 1000; // 15 minutes
   private static readonly LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5 minute progressive cooldown
 
-  public static isLocked(identifier: string): { locked: boolean; retryAfterSeconds?: number } {
-    const key = identifier.toLowerCase().trim();
-    const record = this.attempts.get(key);
+  private static sweepExpired(): void {
+    const now = Date.now();
+    for (const [key, record] of this.attempts.entries()) {
+      if (
+        (record.lockedUntil && now >= record.lockedUntil) ||
+        now - record.firstAttemptAt > this.ATTEMPT_WINDOW_MS
+      ) {
+        this.attempts.delete(key);
+      }
+    }
+  }
+
+  public static isLocked(identifier: string, ip?: string): { locked: boolean; retryAfterSeconds?: number } {
+    if (this.attempts.size > 200) {
+      this.sweepExpired();
+    }
+    const cleanUser = identifier.toLowerCase().trim();
+    const key = ip ? `${cleanUser}:${ip.trim()}` : cleanUser;
+    const record = this.attempts.get(key) || (ip ? this.attempts.get(cleanUser) : undefined);
     if (!record) return { locked: false };
 
     const now = Date.now();
@@ -36,8 +52,12 @@ export class LoginThrottle {
     return { locked: false };
   }
 
-  public static recordFailure(identifier: string): { locked: boolean; retryAfterSeconds?: number; remainingAttempts: number } {
-    const key = identifier.toLowerCase().trim();
+  public static recordFailure(identifier: string, ip?: string): { locked: boolean; retryAfterSeconds?: number; remainingAttempts: number } {
+    if (this.attempts.size > 200) {
+      this.sweepExpired();
+    }
+    const cleanUser = identifier.toLowerCase().trim();
+    const key = ip ? `${cleanUser}:${ip.trim()}` : cleanUser;
     const now = Date.now();
     let record = this.attempts.get(key);
 
@@ -63,9 +83,20 @@ export class LoginThrottle {
     return { locked: false, remainingAttempts: remaining };
   }
 
-  public static recordSuccess(identifier: string): void {
-    const key = identifier.toLowerCase().trim();
+  public static recordSuccess(identifier: string, ip?: string): void {
+    const cleanUser = identifier.toLowerCase().trim();
+    const key = ip ? `${cleanUser}:${ip.trim()}` : cleanUser;
     this.attempts.delete(key);
+    if (ip) {
+      this.attempts.delete(cleanUser);
+    }
   }
 
+  public static clearAll(): void {
+    this.attempts.clear();
+  }
+
+  public static reset(): void {
+    this.clearAll();
+  }
 }

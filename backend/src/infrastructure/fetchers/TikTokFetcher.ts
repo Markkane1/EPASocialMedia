@@ -40,7 +40,9 @@ export class TikTokFetcher implements ISocialFetcher {
       contentViews: views,
       engagement,
       status,
-      isFallback
+      isFallback,
+      dataSource: 'PUBLIC_PROBE',
+      dataQuality: 'ESTIMATED'
     });
   }
 }

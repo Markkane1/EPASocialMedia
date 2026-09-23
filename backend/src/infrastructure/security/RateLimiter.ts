@@ -15,6 +15,15 @@ export interface RateLimitOptions {
 export class RateLimiter {
   private static store: Map<string, RateLimitRecord> = new Map();
 
+  private static sweepExpired(): void {
+    const now = Date.now();
+    for (const [key, record] of RateLimiter.store.entries()) {
+      if (now > record.resetTime) {
+        RateLimiter.store.delete(key);
+      }
+    }
+  }
+
   public static create(options: RateLimitOptions) {
     const {
       windowMs,
@@ -28,6 +37,10 @@ export class RateLimiter {
     } = options;
 
     return (req: Request, res: Response, next: NextFunction): void => {
+      if (RateLimiter.store.size > 500) {
+        RateLimiter.sweepExpired();
+      }
+
       const key = keyGenerator(req);
       const now = Date.now();
       let record = RateLimiter.store.get(key);
@@ -60,4 +73,7 @@ export class RateLimiter {
     };
   }
 
+  public static clearAll(): void {
+    this.store.clear();
+  }
 }

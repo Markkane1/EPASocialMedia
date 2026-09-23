@@ -27,6 +27,8 @@ export interface GetMetricsResponse {
   last_sync: string;
   sync_status: string;
   sync_logs: Array<{ timestamp: string; status: string; message: string }>;
+  isEstimated?: boolean;
+  provenance?: string;
 }
 
 export class GetMetricsUseCase {
@@ -91,8 +93,17 @@ export class GetMetricsUseCase {
 
     for (const [key, metric] of Object.entries(basePlatforms)) {
       const scaled = metric.scaleForPeriod(multiplier, is7d);
-      scaledPlatforms[key] = scaled;
-      scaledList.push(scaled);
+      const filteredTrends = scaled.historicalTrends && scaled.historicalTrends.length > 0
+        ? scaled.historicalTrends.filter(pt => (!fromDateStr || pt.date >= fromDateStr) && (!toDateStr || pt.date <= toDateStr))
+        : scaled.historicalTrends;
+
+      const adjustedMetric = new PlatformMetric({
+        ...scaled,
+        historicalTrends: (filteredTrends && filteredTrends.length > 0) ? filteredTrends : scaled.historicalTrends
+      });
+
+      scaledPlatforms[key] = adjustedMetric;
+      scaledList.push(adjustedMetric);
     }
 
     const summary = ExecutiveSummary.fromPlatformMetrics(scaledList);
@@ -114,7 +125,9 @@ export class GetMetricsUseCase {
       platforms: serializedPlatforms,
       last_sync: lastSync,
       sync_status: 'synced',
-      sync_logs: recentLogs.map(l => l.toJSON())
+      sync_logs: recentLogs.map(l => l.toJSON()),
+      isEstimated: period !== '28d',
+      provenance: period === '28d' ? 'DIRECT_SNAPSHOT' : 'ESTIMATED_PERIOD_SCALING'
     };
   }
 }

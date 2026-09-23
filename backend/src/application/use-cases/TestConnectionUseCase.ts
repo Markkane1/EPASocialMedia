@@ -1,5 +1,25 @@
 import { ISocialFetcher, ConnectionTestResult } from '../../infrastructure/fetchers/ISocialFetcher';
 
+function sanitizeProviderDetails(details: any): any {
+  if (!details) return undefined;
+  if (typeof details !== 'object') {
+    return String(details).replace(/(access_token|bearer|key|secret)=[^&\s]+/gi, '$1=[REDACTED]');
+  }
+  const clean: any = Array.isArray(details) ? [] : {};
+  for (const [k, v] of Object.entries(details)) {
+    if (/token|secret|key|password|auth|credential/i.test(k)) {
+      clean[k] = '[REDACTED]';
+    } else if (typeof v === 'string') {
+      clean[k] = v.replace(/(access_token|bearer|key|secret)=[^&\s]+/gi, '$1=[REDACTED]');
+    } else if (typeof v === 'object' && v !== null) {
+      clean[k] = sanitizeProviderDetails(v);
+    } else {
+      clean[k] = v;
+    }
+  }
+  return clean;
+}
+
 export class TestConnectionUseCase {
   private fetcherMap: Map<string, ISocialFetcher>;
 
@@ -13,7 +33,11 @@ export class TestConnectionUseCase {
     const fetcher = this.fetcherMap.get(key);
 
     if (fetcher) {
-      return await fetcher.testConnection();
+      const result = await fetcher.testConnection();
+      if (result.details) {
+        result.details = sanitizeProviderDetails(result.details);
+      }
+      return result;
     }
 
     return {
@@ -23,3 +47,4 @@ export class TestConnectionUseCase {
     };
   }
 }
+

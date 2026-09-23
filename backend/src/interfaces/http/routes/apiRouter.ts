@@ -29,7 +29,9 @@ import {
   MetricsQuerySchema,
   UpdateConfigSchema,
   TestConnectionSchema,
-  ChangePasswordSchema
+  ChangePasswordSchema,
+  UserStatusSchema,
+  AuditLogQuerySchema
 } from '../validation/schemas';
 import { RateLimiter } from '../../../infrastructure/security/RateLimiter';
 
@@ -88,11 +90,11 @@ export function createApiRouter(): Router {
   router.get('/health', (req, res) => healthController.getStatus(req, res));
 
   // 5. Authentication Routes
-  router.post('/auth/login', authLimiter, validateBody(LoginSchema), (req, res) => authController.login(req, res));
-  router.get('/auth/me', requireAuth, (req, res) => authController.getMe(req, res));
-  router.post('/auth/logout', requireAuth, (req, res) => authController.logout(req, res));
-  router.post('/auth/change-password', requireAuth, authLimiter, validateBody(ChangePasswordSchema), (req, res) =>
-    authController.changePassword(req, res)
+  router.post('/auth/login', authLimiter, validateBody(LoginSchema), (req, res, next) => authController.login(req, res, next));
+  router.get('/auth/me', requireAuth, (req, res, next) => authController.getMe(req, res, next));
+  router.post('/auth/logout', requireAuth, (req, res, next) => authController.logout(req, res, next));
+  router.post('/auth/change-password', requireAuth, authLimiter, validateBody(ChangePasswordSchema), (req, res, next) =>
+    authController.changePassword(req, res, next)
   );
 
   // 6. Protected Operational Routes (Authentication & Permission Required)
@@ -140,7 +142,8 @@ export function createApiRouter(): Router {
     '/audit-logs',
     requireAuth,
     requirePermission('MANAGE_CONFIG'),
-    (req, res) => authController.getAuditLogs(req, res)
+    validateQuery(AuditLogQuerySchema),
+    (req, res, next) => authController.getAuditLogs(req, res, next)
   );
 
   // 9. User & Administrative Management Guardrails (Admin Only)
@@ -148,13 +151,14 @@ export function createApiRouter(): Router {
     '/users',
     requireAuth,
     requirePermission('MANAGE_USERS'),
-    (req, res) => authController.listUsers(req, res)
+    (req, res, next) => authController.listUsers(req, res, next)
   );
   router.post(
     '/users/:username/status',
     requireAuth,
     requirePermission('MANAGE_USERS'),
-    (req, res) => authController.setUserStatus(req, res)
+    validateBody(UserStatusSchema),
+    (req, res, next) => authController.setUserStatus(req, res, next)
   );
 
   return router;

@@ -10,6 +10,9 @@ export interface DailyTrendPoint {
   follows: number;
 }
 
+export type MetricDataSource = 'OFFICIAL_API' | 'PUBLIC_PROBE' | 'DATABASE_SNAPSHOT' | 'FALLBACK_STATIC';
+export type MetricDataQuality = 'VERIFIED_LIVE' | 'ESTIMATED' | 'STALE' | 'FALLBACK';
+
 export interface PlatformMetricProps {
   platform: string;
   name: string;
@@ -29,6 +32,9 @@ export interface PlatformMetricProps {
   engagement: number;
   status: 'connected' | 'simulated' | 'error' | 'disconnected' | 'unauthenticated' | 'unconfigured';
   isFallback: boolean;
+  dataSource?: MetricDataSource;
+  dataQuality?: MetricDataQuality;
+  retrievedAt?: string;
   handle?: string;
   url?: string;
   lastUpdated?: string;
@@ -53,6 +59,9 @@ export class PlatformMetric {
   public readonly engagement: number;
   public readonly status: 'connected' | 'simulated' | 'error' | 'disconnected' | 'unauthenticated' | 'unconfigured';
   public readonly isFallback: boolean;
+  public readonly dataSource: MetricDataSource;
+  public readonly dataQuality: MetricDataQuality;
+  public readonly retrievedAt: string;
   public readonly handle?: string;
   public readonly url?: string;
   public readonly lastUpdated: string;
@@ -76,9 +85,30 @@ export class PlatformMetric {
     this.engagement = Math.max(0, props.engagement);
     this.status = props.status;
     this.isFallback = props.isFallback;
+    this.lastUpdated = props.lastUpdated || new Date().toISOString();
+    this.retrievedAt = props.retrievedAt || this.lastUpdated;
+    this.dataSource = props.dataSource || (props.isFallback ? 'FALLBACK_STATIC' : 'OFFICIAL_API');
+    this.dataQuality = props.dataQuality || (props.isFallback ? 'FALLBACK' : 'VERIFIED_LIVE');
     this.handle = props.handle;
     this.url = props.url;
-    this.lastUpdated = props.lastUpdated || new Date().toISOString();
+  }
+
+  /**
+   * Checks if metric data is older than the configured threshold (default 24 hours)
+   */
+  public isStale(maxAgeHours: number = 24): boolean {
+    const ageMs = Date.now() - new Date(this.retrievedAt).getTime();
+    return isNaN(ageMs) || ageMs > maxAgeHours * 60 * 60 * 1000;
+  }
+
+  /**
+   * Returns human-readable staleness status category
+   */
+  public getStalenessStatus(maxAgeHours: number = 24): 'FRESH' | 'CACHED' | 'STALE' {
+    const ageMs = Date.now() - new Date(this.retrievedAt).getTime();
+    if (isNaN(ageMs) || ageMs > maxAgeHours * 60 * 60 * 1000) return 'STALE';
+    if (ageMs > 60 * 60 * 1000) return 'CACHED';
+    return 'FRESH';
   }
 
   /**
@@ -118,7 +148,10 @@ export class PlatformMetric {
       visits: scaledVisits,
       watchTime: scaledWt,
       watchTimeHrs: scaledWt,
-      engagement: scaledEngagement
+      engagement: scaledEngagement,
+      dataSource: this.dataSource,
+      dataQuality: multiplier === 1.0 && !is7d ? this.dataQuality : 'ESTIMATED',
+      retrievedAt: this.retrievedAt
     });
   }
 
@@ -142,9 +175,15 @@ export class PlatformMetric {
       engagement: this.engagement,
       status: this.status,
       is_fallback: this.isFallback,
+      data_source: this.dataSource,
+      data_quality: this.isStale() ? 'STALE' : this.dataQuality,
+      retrieved_at: this.retrievedAt,
+      is_stale: this.isStale(),
+      staleness_label: this.getStalenessStatus(),
       handle: this.handle,
       url: this.url,
       last_updated: this.lastUpdated
     };
   }
 }
+

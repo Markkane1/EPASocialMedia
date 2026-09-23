@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { AuthUseCase } from '../../../application/use-cases/AuthUseCase';
 
 export class AuthController {
   constructor(private readonly authUseCase: AuthUseCase) {}
 
-  public login = async (req: Request, res: Response): Promise<void> => {
+  public login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { username, password } = req.body;
       const result = await this.authUseCase.login(username, password);
@@ -24,62 +24,72 @@ export class AuthController {
         user: result.user
       });
     } catch (err: any) {
-      res.status(500).json({
-        error: 'InternalServerError',
-        message: err.message
-      });
+      next(err);
     }
   };
 
-  public getMe = async (req: Request, res: Response): Promise<void> => {
-    if (!req.user) {
-      res.status(401).json({ error: 'Unauthorized', message: 'No active session.' });
-      return;
-    }
-
-    res.status(200).json({
-      status: 'success',
-      user: {
-        username: req.user.username,
-        role: req.user.role,
-        fullName: req.user.fullName
+  public getMe = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (!req.user) {
+        res.status(401).json({ error: 'Unauthorized', message: 'No active session.' });
+        return;
       }
-    });
-  };
 
-  public logout = async (req: Request, res: Response): Promise<void> => {
-    if (req.user?.sessionId) {
-      const { SessionManager } = await import('../../../infrastructure/auth/SessionManager');
-      SessionManager.revokeSession(req.user.sessionId, 'USER_LOGOUT');
+      res.status(200).json({
+        status: 'success',
+        user: {
+          username: req.user.username,
+          role: req.user.role,
+          fullName: req.user.fullName
+        }
+      });
+    } catch (err: any) {
+      next(err);
     }
-
-    const { SecurityAuditLogger } = await import('../../../infrastructure/logging/SecurityAuditLogger');
-    SecurityAuditLogger.record({
-      actor: req.user?.username || 'ANONYMOUS',
-      action: 'USER_LOGOUT',
-      resource: '/api/auth/logout',
-      result: 'SUCCESS',
-      ipAddress: req.ip || req.socket.remoteAddress
-    });
-
-    res.status(200).json({
-      status: 'success',
-      message: 'Logged out successfully. Session invalidated.'
-    });
   };
 
-  public getAuditLogs = async (req: Request, res: Response): Promise<void> => {
-    const { SecurityAuditLogger } = await import('../../../infrastructure/logging/SecurityAuditLogger');
-    const limit = req.query.limit ? parseInt(req.query.limit as string, 10) : 50;
-    const logs = SecurityAuditLogger.getRecentLogs(limit);
-    res.status(200).json({
-      status: 'success',
-      total: logs.length,
-      logs
-    });
+  public logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (req.user?.sessionId) {
+        const { SessionManager } = await import('../../../infrastructure/auth/SessionManager');
+        SessionManager.revokeSession(req.user.sessionId, 'USER_LOGOUT');
+      }
+
+      const { SecurityAuditLogger } = await import('../../../infrastructure/logging/SecurityAuditLogger');
+      SecurityAuditLogger.record({
+        actor: req.user?.username || 'ANONYMOUS',
+        action: 'USER_LOGOUT',
+        resource: '/api/auth/logout',
+        result: 'SUCCESS',
+        ipAddress: req.ip || req.socket.remoteAddress
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Logged out successfully. Session invalidated.'
+      });
+    } catch (err: any) {
+      next(err);
+    }
   };
 
-  public changePassword = async (req: Request, res: Response): Promise<void> => {
+  public getAuditLogs = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { SecurityAuditLogger } = await import('../../../infrastructure/logging/SecurityAuditLogger');
+      const rawLimit = typeof req.query.limit === 'number' ? req.query.limit : parseInt(req.query.limit as string, 10);
+      const limit = isNaN(rawLimit) ? 50 : Math.max(1, Math.min(100, rawLimit));
+      const logs = await SecurityAuditLogger.getDurableLogs(limit);
+      res.status(200).json({
+        status: 'success',
+        total: logs.length,
+        logs
+      });
+    } catch (err: any) {
+      next(err);
+    }
+  };
+
+  public changePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       if (!req.user) {
         res.status(401).json({ error: 'Unauthorized', message: 'No active session.' });
@@ -103,29 +113,30 @@ export class AuthController {
         message: result.message
       });
     } catch (err: any) {
-      res.status(500).json({
-        error: 'InternalServerError',
-        message: err.message
-      });
+      next(err);
     }
   };
 
-  public listUsers = async (req: Request, res: Response): Promise<void> => {
+  public listUsers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const users = await this.authUseCase.listUsers();
       res.status(200).json({ status: 'success', users });
     } catch (err: any) {
-      res.status(500).json({ error: 'InternalServerError', message: err.message });
+      next(err);
     }
   };
 
-  public setUserStatus = async (req: Request, res: Response): Promise<void> => {
+  public setUserStatus = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const targetUsername = req.params.username;
       const { isActive } = req.body;
+      if (typeof isActive !== 'boolean') {
+        res.status(400).json({ error: 'BadRequest', message: 'Field "isActive" must be an explicit boolean.' });
+        return;
+      }
       const actorUsername = req.user?.username || 'SYSTEM';
 
-      const result = await this.authUseCase.setUserActiveStatus(targetUsername, Boolean(isActive), actorUsername);
+      const result = await this.authUseCase.setUserActiveStatus(targetUsername, isActive, actorUsername);
 
       if (!result.success) {
         res.status(400).json({ error: 'BadRequest', message: result.message });
@@ -134,7 +145,7 @@ export class AuthController {
 
       res.status(200).json({ status: 'success', message: result.message });
     } catch (err: any) {
-      res.status(500).json({ error: 'InternalServerError', message: err.message });
+      next(err);
     }
   };
 }

@@ -101,7 +101,9 @@ export class XFetcher implements ISocialFetcher {
       contentViews: views,
       engagement,
       status,
-      isFallback
+      isFallback,
+      dataSource: hasToken && !isFallback ? 'OFFICIAL_API' : 'PUBLIC_PROBE',
+      dataQuality: hasToken && !isFallback ? 'VERIFIED_LIVE' : 'ESTIMATED'
     });
   }
 }

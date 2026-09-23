@@ -136,4 +136,26 @@ export class SessionManager {
     return count;
   }
 
+  public static sweepExpired(): void {
+    const now = Date.now();
+    const idleTimeout = this.getIdleTimeoutMs();
+    const absLifetime = this.getAbsoluteLifetimeMs();
+    for (const [id, session] of this.sessions.entries()) {
+      if (
+        session.isRevoked ||
+        now - session.lastActivityAt > idleTimeout ||
+        now - session.createdAt > absLifetime
+      ) {
+        this.sessions.delete(id);
+      }
+    }
+  }
+
+  public static getSession(sessionId: string): UserSession | undefined {
+    return this.sessions.get(sessionId);
+  }
+
+  public static clearAll(): void {
+    this.sessions.clear();
+  }
 }

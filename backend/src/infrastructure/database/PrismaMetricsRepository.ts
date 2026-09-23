@@ -203,6 +203,9 @@ export class PrismaMetricsRepository implements IMetricsRepository {
               engagement: latest ? Number(latest.engagement) : 0,
               status: (p.status.toLowerCase() as any) || 'connected',
               isFallback: p.isFallback,
+              dataSource: 'DATABASE_SNAPSHOT',
+              dataQuality: p.isFallback ? 'FALLBACK' : 'VERIFIED_LIVE',
+              retrievedAt: latest ? latest.recordedAt.toISOString() : undefined,
               lastUpdated: latest?.recordedAt.toISOString()
             });
           }
@@ -217,6 +220,11 @@ export class PrismaMetricsRepository implements IMetricsRepository {
   }
 
   public async savePlatformMetrics(metrics: Record<string, PlatformMetric>): Promise<void> {
+    if (!metrics || Object.keys(metrics).length === 0) {
+      console.warn('[METRICS_REPO] Refusing to overwrite metrics with empty dataset.');
+      return;
+    }
+
     this.inMemoryMetrics = { ...metrics };
     this.lastSyncTime = new Date().toISOString();
 
@@ -224,38 +232,40 @@ export class PrismaMetricsRepository implements IMetricsRepository {
     if (isConnected) {
       try {
         const prisma = PrismaClientSingleton.getInstance();
-        for (const [slug, m] of Object.entries(metrics)) {
-          const platform = await prisma.platform.upsert({
-            where: { slug },
-            update: {
-              name: m.name,
-              handle: m.handle,
-              url: m.url,
-              status: m.status.toUpperCase() as PlatformStatus,
-              isFallback: m.isFallback
-            },
-            create: {
-              slug,
-              name: m.name,
-              handle: m.handle,
-              url: m.url,
-              status: m.status.toUpperCase() as PlatformStatus,
-              isFallback: m.isFallback
-            }
-          });
+        await prisma.$transaction(async (tx) => {
+          for (const [slug, m] of Object.entries(metrics)) {
+            const platform = await tx.platform.upsert({
+              where: { slug },
+              update: {
+                name: m.name,
+                handle: m.handle,
+                url: m.url,
+                status: m.status.toUpperCase() as PlatformStatus,
+                isFallback: m.isFallback
+              },
+              create: {
+                slug,
+                name: m.name,
+                handle: m.handle,
+                url: m.url,
+                status: m.status.toUpperCase() as PlatformStatus,
+                isFallback: m.isFallback
+              }
+            });
 
-          await prisma.metricRecord.create({
-            data: {
-              platformId: platform.id,
-              period: '28d',
-              followers: BigInt(m.followers),
-              views: BigInt(m.views),
-              watchTimeHrs: m.watchTimeHrs,
-              newFollowers: m.newFollowers,
-              engagement: BigInt(m.engagement)
-            }
-          });
-        }
+            await tx.metricRecord.create({
+              data: {
+                platformId: platform.id,
+                period: '28d',
+                followers: BigInt(m.followers),
+                views: BigInt(m.views),
+                watchTimeHrs: m.watchTimeHrs,
+                newFollowers: m.newFollowers,
+                engagement: BigInt(m.engagement)
+              }
+            });
+          }
+        });
       } catch (err) {
         console.error('[DATABASE] Error persisting metrics to PostgreSQL:', err);
       }
