@@ -28,7 +28,7 @@ export function securityHeaders(req: Request, res: Response, next: NextFunction)
   // Tailored Content Security Policy (L-09 Hardened: self-hosted fonts, no external CDN dependencies)
   const csp = [
     "default-src 'self'",
-    "script-src 'self'",
+    "script-src 'self' 'unsafe-eval'",
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self' data:",
     "img-src 'self' data:",
