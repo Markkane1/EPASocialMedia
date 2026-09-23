@@ -30,15 +30,6 @@ export interface GetMetricsResponse {
 }
 
 export class GetMetricsUseCase {
-  private static readonly PERIOD_MULTIPLIERS: Record<string, number> = {
-    '7d': 7 / 28,
-    '28d': 1.0,
-    'month': 30 / 28,
-    '90d': 90 / 28,
-    'ytd': 260 / 28,
-    'all': 365 / 28
-  };
-
   constructor(private readonly metricsRepo: IMetricsRepository) {}
 
   public async execute(request: GetMetricsRequest): Promise<GetMetricsResponse> {

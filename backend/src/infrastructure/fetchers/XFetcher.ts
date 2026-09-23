@@ -62,7 +62,6 @@ export class XFetcher implements ISocialFetcher {
     let views = scraped.reach; // 120
     let engagement = scraped.engagement; // 5
     let status: 'connected' | 'unauthenticated' | 'error' = 'connected';
-    let isFallback = false;
 
     if (this.bearerToken && this.bearerToken.trim()) {
       try {
@@ -79,7 +78,6 @@ export class XFetcher implements ISocialFetcher {
           if (data?.data?.public_metrics) {
             followers = data.data.public_metrics.followers_count ?? followers;
             status = 'connected';
-            isFallback = false;
           }
         }
       } catch (err) {
@@ -100,7 +98,7 @@ export class XFetcher implements ISocialFetcher {
       contentViews: views,
       engagement,
       status,
-      isFallback
+      isFallback: false
     });
   }
 }

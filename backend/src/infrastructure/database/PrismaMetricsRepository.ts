@@ -1,6 +1,5 @@
 import { IMetricsRepository } from '../../domain/repositories/IMetricsRepository';
 import { PlatformMetric } from '../../domain/entities/PlatformMetric';
-import { ExecutiveSummary } from '../../domain/entities/ExecutiveSummary';
 import { SyncLog } from '../../domain/entities/SyncLog';
 import { PrismaClientSingleton } from './PrismaClientSingleton';
 import { PlatformStatus } from '@prisma/client';
@@ -9,7 +8,6 @@ import { getInstagramHistoricalTrends } from '../data/instagramHistoricalData';
 
 export class PrismaMetricsRepository implements IMetricsRepository {
   private inMemoryMetrics: Record<string, PlatformMetric> = {};
-  private inMemorySummary: ExecutiveSummary;
   private inMemoryLogs: SyncLog[] = [];
   private lastSyncTime: string = new Date().toISOString();
 
@@ -165,7 +163,6 @@ export class PrismaMetricsRepository implements IMetricsRepository {
       })
     };
 
-    this.inMemorySummary = ExecutiveSummary.fromPlatformMetrics(Object.values(this.inMemoryMetrics));
     this.inMemoryLogs.push(new SyncLog({
       timestamp: this.lastSyncTime,
       status: 'initialized',
@@ -266,8 +263,6 @@ export class PrismaMetricsRepository implements IMetricsRepository {
   }
 
   public async saveExecutiveSummary(period: string, summary: ExecutiveSummary): Promise<void> {
-    this.inMemorySummary = summary;
-
     const isConnected = await PrismaClientSingleton.checkConnection();
     if (isConnected) {
       try {

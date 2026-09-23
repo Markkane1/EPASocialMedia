@@ -1,6 +1,5 @@
 import { ISocialFetcher, ConnectionTestResult } from './ISocialFetcher';
 import { PlatformMetric } from '../../domain/entities/PlatformMetric';
-import { LiveWebScraperService } from './LiveWebScraperService';
 import { getFacebookHistoricalTrends } from '../data/facebookHistoricalData';
 
 export class FacebookFetcher implements ISocialFetcher {
@@ -54,7 +53,6 @@ export class FacebookFetcher implements ISocialFetcher {
   public async fetchMetrics(): Promise<PlatformMetric> {
     // Default base metrics from verified Meta Suite 28d reporting
     let followers = 26416;
-    let watchTime = 0;
     let newFollowers = 1900;
     let views = 1800000;
     let viewers = 532100;
@@ -90,9 +88,6 @@ export class FacebookFetcher implements ISocialFetcher {
                       if (latestVal !== undefined) {
                         if (item.name === 'page_views_total') visits = latestVal;
                         if (item.name === 'page_daily_follows_unique') newFollowers = latestVal;
-                        if (item.name === 'page_post_engagements' && latestVal > 0) {
-                          // Meta post engagements count can augment interaction records
-                        }
                       }
                     }
                   }
@@ -116,8 +111,8 @@ export class FacebookFetcher implements ISocialFetcher {
       handle: 'EnvironmentProtectionAgencyPunjab',
       url: 'https://www.facebook.com/EnvironmentProtectionAgencyPunjab/',
       followers,
-      watchTime: watchTime > 0 ? watchTime : null,
-      watchTimeHrs: watchTime > 0 ? watchTime : null,
+      watchTime: null,
+      watchTimeHrs: null,
       newFollowers,
       views,
       contentViews: views,

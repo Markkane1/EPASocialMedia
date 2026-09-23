@@ -5,13 +5,9 @@ import { LiveWebScraperService } from './LiveWebScraperService';
 export class TikTokFetcher implements ISocialFetcher {
   public readonly platformKey = 'tiktok';
   private readonly username: string;
-  private readonly clientKey: string;
-  private readonly clientSecret: string;
 
-  constructor(username?: string, clientKey?: string, clientSecret?: string) {
+  constructor(username?: string) {
     this.username = username || process.env.TIKTOK_USERNAME || 'epapunjab';
-    this.clientKey = clientKey || process.env.TIKTOK_CLIENT_KEY || '';
-    this.clientSecret = clientSecret || process.env.TIKTOK_CLIENT_SECRET || '';
   }
 
   public async testConnection(): Promise<ConnectionTestResult> {

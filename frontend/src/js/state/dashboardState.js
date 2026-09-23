@@ -15,7 +15,6 @@ class DashboardState {
       formatted: 'Last 28 Days'
     };
     this.metricsData = null;
-    this.configData = null;
     this.currentUser = null;
     this.listeners = new Set();
   }
@@ -59,10 +58,6 @@ class DashboardState {
     this.notify('METRICS_UPDATED', data);
   }
 
-  setConfigData(config) {
-    this.configData = config;
-    this.notify('CONFIG_UPDATED', config);
-  }
 
   setCurrentUser(user) {
     this.currentUser = user;

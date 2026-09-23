@@ -68,11 +68,4 @@ export class LoginThrottle {
     this.attempts.delete(key);
   }
 
-  public static clearAll(): void {
-    this.attempts.clear();
-  }
-
-  public static reset(): void {
-    this.clearAll();
-  }
 }

@@ -136,11 +136,4 @@ export class SessionManager {
     return count;
   }
 
-  public static getSession(sessionId: string): UserSession | undefined {
-    return this.sessions.get(sessionId);
-  }
-
-  public static clearAll(): void {
-    this.sessions.clear();
-  }
 }

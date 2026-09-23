@@ -32,13 +32,6 @@ export class AppConfig {
     return masked;
   }
 
-  public getAllRaw(): Record<string, string> {
-    const raw: Record<string, string> = {};
-    for (const [key, item] of this.configMap.entries()) {
-      raw[key] = item.value || '';
-    }
-    return raw;
-  }
 
   private maskValue(val: string): string {
     if (!val || val.length < 8) {

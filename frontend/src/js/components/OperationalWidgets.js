@@ -198,8 +198,4 @@ export class OperationalWidgetsComponent {
     }
   }
 
-  // Alias for backward compatibility
-  renderCampaignProgress(metricsData) {
-    this.renderChannelAudienceShare(metricsData);
-  }
 }

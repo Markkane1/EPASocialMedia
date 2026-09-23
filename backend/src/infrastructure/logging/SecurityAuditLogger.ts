@@ -71,7 +71,4 @@ export class SecurityAuditLogger {
     return this.logs.slice(0, Math.min(limit, 100));
   }
 
-  public static clearAll(): void {
-    this.logs = [];
-  }
 }

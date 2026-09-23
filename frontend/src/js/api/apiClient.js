@@ -45,11 +45,6 @@ export const ApiClient = {
     return headers;
   },
 
-  async getStatus() {
-    const res = await fetch(`${BASE_URL}/api/status`);
-    if (!res.ok) throw new Error(`Status check failed: ${res.statusText}`);
-    return await res.json();
-  },
 
   async login(username, password) {
     const res = await fetch(`${BASE_URL}/api/auth/login`, {

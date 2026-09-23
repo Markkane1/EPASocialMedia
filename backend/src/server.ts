@@ -7,11 +7,6 @@ import { PrismaClientSingleton } from './infrastructure/database/PrismaClientSin
 const PORT = parseInt(process.env.PORT || '8080', 10);
 
 async function bootstrap() {
-  console.log('='.repeat(60));
-  console.log('EPA PUNJAB SOCIAL MEDIA DASHBOARD — BACKEND SERVICE');
-  console.log('Clean Architecture | PostgreSQL Persistence | Prisma ORM');
-  console.log('='.repeat(60));
-
   // Verify Database connectivity asynchronously
   await PrismaClientSingleton.checkConnection();
 

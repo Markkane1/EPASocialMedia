@@ -1,6 +1,5 @@
 import { ISocialFetcher, ConnectionTestResult } from './ISocialFetcher';
 import { PlatformMetric } from '../../domain/entities/PlatformMetric';
-import { LiveWebScraperService } from './LiveWebScraperService';
 import { getInstagramHistoricalTrends } from '../data/instagramHistoricalData';
 
 export class InstagramFetcher implements ISocialFetcher {

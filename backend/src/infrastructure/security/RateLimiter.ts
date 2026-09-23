@@ -60,7 +60,4 @@ export class RateLimiter {
     };
   }
 
-  public static clearAll(): void {
-    this.store.clear();
-  }
 }
