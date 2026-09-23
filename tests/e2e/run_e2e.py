@@ -17,7 +17,8 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 BASE_URL = "http://127.0.0.1:8080"
-ARTIFACT_DIR = "C:/Users/Asif/.gemini/antigravity/brain/c355c590-0658-4256-88e8-cd72b479e057"
+ARTIFACT_DIR = os.environ.get("ARTIFACT_DIR", os.path.join(os.path.dirname(__file__), "artifacts"))
+os.makedirs(ARTIFACT_DIR, exist_ok=True)
 
 def run_tests():
     print("=" * 65)
@@ -118,7 +119,8 @@ def run_tests():
         print("  ✔ Invalid credentials successfully blocked by security guard")
 
         # Test valid admin credentials
-        page.fill('#loginPassword', 'Admin@EPAPunjab2026!')
+        admin_pass = os.environ.get('E2E_ADMIN_PASSWORD', 'TestAdmin@2026!')
+        page.fill('#loginPassword', admin_pass)
         page.click('#btnSubmitLogin')
         page.wait_for_timeout(1000)
 

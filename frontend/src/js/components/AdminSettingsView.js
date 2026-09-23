@@ -337,10 +337,18 @@ export class AdminSettingsView {
     try {
       const config = await ApiClient.getConfig();
       if (config) {
+        const sensitiveKeys = ['FB_ACCESS_TOKEN', 'IG_ACCESS_TOKEN', 'X_BEARER_TOKEN', 'LINKEDIN_ACCESS_TOKEN', 'YOUTUBE_API_KEY'];
         ['FB_PAGE_ID', 'FB_ACCESS_TOKEN', 'IG_USER_ID', 'IG_ACCESS_TOKEN', 'X_USERNAME', 'X_BEARER_TOKEN', 'LINKEDIN_VANITY_NAME', 'LINKEDIN_ACCESS_TOKEN', 'TIKTOK_USERNAME', 'TIKTOK_CLIENT_KEY', 'YOUTUBE_API_KEY'].forEach(key => {
           const input = document.getElementById(`cfg_${key}`);
           if (input && config[key] !== undefined) {
-            input.value = config[key];
+            if (sensitiveKeys.includes(key)) {
+              input.value = '';
+              if (config[key] && config[key].trim()) {
+                input.placeholder = '•••••••• (Configured — leave blank to keep unchanged)';
+              }
+            } else {
+              input.value = config[key];
+            }
           }
         });
       }
@@ -355,9 +363,20 @@ export class AdminSettingsView {
       const feedbackText = document.getElementById('settingsFeedbackText');
 
       const payload = {};
+      const sensitiveKeys = ['FB_ACCESS_TOKEN', 'IG_ACCESS_TOKEN', 'X_BEARER_TOKEN', 'LINKEDIN_ACCESS_TOKEN', 'YOUTUBE_API_KEY'];
       ['FB_PAGE_ID', 'FB_ACCESS_TOKEN', 'IG_USER_ID', 'IG_ACCESS_TOKEN', 'X_USERNAME', 'X_BEARER_TOKEN', 'LINKEDIN_VANITY_NAME', 'LINKEDIN_ACCESS_TOKEN', 'TIKTOK_USERNAME', 'TIKTOK_CLIENT_KEY', 'YOUTUBE_API_KEY'].forEach(key => {
         const input = document.getElementById(`cfg_${key}`);
-        if (input) payload[key] = input.value;
+        if (input) {
+          const val = input.value.trim();
+          if (sensitiveKeys.includes(key)) {
+            // Do not transmit empty or mask values to avoid destroying stored secrets
+            if (val && !val.includes('•')) {
+              payload[key] = val;
+            }
+          } else {
+            payload[key] = input.value;
+          }
+        }
       });
 
       try {

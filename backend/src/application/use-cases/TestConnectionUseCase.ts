@@ -17,9 +17,9 @@ export class TestConnectionUseCase {
     }
 
     return {
-      status: 'OK',
+      status: 'ERROR',
       platform: key,
-      message: `Successfully verified connection for ${key.toUpperCase()}`
+      message: `Unknown or unconfigured platform: "${key}". Supported platforms are: ${Array.from(this.fetcherMap.keys()).join(', ')}`
     };
   }
 }

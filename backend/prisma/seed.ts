@@ -142,6 +142,16 @@ async function main() {
   });
 
   // Seed Users for RBAC Security
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'TestAdmin@2026!';
+  const execPassword = process.env.SEED_EXECUTIVE_PASSWORD || 'TestExecutive@2026!';
+
+  const hashPassword = (password: string): string => {
+    const crypto = require('crypto');
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    return `${salt}:${hash}`;
+  };
+
   await prisma.user.upsert({
     where: { username: 'admin' },
     update: {},
@@ -149,7 +159,7 @@ async function main() {
       username: 'admin',
       fullName: 'EPA System Administrator',
       role: 'ADMIN',
-      passwordHash: '1981c7a87e2efe7c56ba1667614c23b9:6efe404837639e5a4e41e5b5b15010eb404745725831775918843201fc35158612b6dd97f2515561c97ac96bb86c6350c9933c3c3ba054190db580912f2cee04'
+      passwordHash: hashPassword(adminPassword)
     }
   });
 
@@ -160,11 +170,11 @@ async function main() {
       username: 'executive',
       fullName: 'EPA Executive Officer',
       role: 'EXECUTIVE',
-      passwordHash: '509a8e9ff6d66eaf5926db8be79361cb:a87495d68d2dc69bf1f4146ff82384ef6922022d7f20355c625dcb0a942ecefc1456ac863aab76d2e670baa6d2dc96fe21c3e0360f649277848f708f83b26692'
+      passwordHash: hashPassword(execPassword)
     }
   });
 
-  console.log('[SEED] Verified real metrics and RBAC users seeded successfully!');
+  console.log('[SEED] Verified operational snapshot and RBAC users seeded successfully!');
 }
 
 main()

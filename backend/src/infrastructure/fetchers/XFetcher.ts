@@ -15,9 +15,9 @@ export class XFetcher implements ISocialFetcher {
   public async testConnection(): Promise<ConnectionTestResult> {
     if (!this.bearerToken || !this.bearerToken.trim()) {
       return {
-        status: 'OK',
+        status: 'ERROR',
         platform: 'x',
-        message: 'Connected via Live Public Web Probe (Handle @EPAPunjab). Add X_BEARER_TOKEN for Twitter API v2.'
+        message: 'X (Twitter) API Bearer token not configured (X_BEARER_TOKEN is missing). Please configure a valid Bearer token in Settings.'
       };
     }
 
@@ -61,7 +61,9 @@ export class XFetcher implements ISocialFetcher {
     let newFollowers = 1;
     let views = scraped.reach; // 120
     let engagement = scraped.engagement; // 5
-    let status: 'connected' | 'unauthenticated' | 'error' = 'connected';
+    const hasToken = !!(this.bearerToken && this.bearerToken.trim());
+    let status: 'connected' | 'unauthenticated' | 'error' = hasToken ? 'connected' : 'unauthenticated';
+    let isFallback = !hasToken;
 
     if (this.bearerToken && this.bearerToken.trim()) {
       try {
@@ -78,6 +80,7 @@ export class XFetcher implements ISocialFetcher {
           if (data?.data?.public_metrics) {
             followers = data.data.public_metrics.followers_count ?? followers;
             status = 'connected';
+            isFallback = false;
           }
         }
       } catch (err) {
@@ -98,7 +101,7 @@ export class XFetcher implements ISocialFetcher {
       contentViews: views,
       engagement,
       status,
-      isFallback: false
+      isFallback
     });
   }
 }

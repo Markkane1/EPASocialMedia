@@ -26,7 +26,7 @@ describe('API Input Validation & Mass-Assignment Defenses', () => {
     test('Accepts valid allowed platform credentials and settings', () => {
       const validPayload = {
         FB_PAGE_ID: '785478874649452',
-        FB_ACCESS_TOKEN: 'EAAPXGWOK9PQBSseupBGXZCZCONlZCZAKV...',
+        FB_ACCESS_TOKEN: 'mock_fb_access_token_sample_value_123',
         IG_USER_ID: '17841476494927751',
         X_USERNAME: '@epapunjab'
       };

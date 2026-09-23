@@ -12,12 +12,12 @@ export interface ScrapedPlatformMetrics {
 
 export class LiveWebScraperService {
   private static cachedData: Record<string, ScrapedPlatformMetrics> = {
-    facebook: { followers: 26409, reach: 185000, engagement: 1872, posts: 45, status: 'live_scraped', verified: true },
-    instagram: { followers: 2754, reach: 32000, engagement: 1306, posts: 1306, status: 'live_scraped', verified: true },
-    tiktok: { followers: 0, reach: 500, engagement: 4, posts: 5, status: 'live_scraped', verified: true },
-    linkedin: { followers: 609, reach: 8500, engagement: 142, posts: 24, status: 'live_scraped', verified: true },
-    x: { followers: 1, reach: 120, engagement: 5, posts: 5, status: 'live_scraped', verified: true },
-    youtube: { followers: 0, reach: 0, engagement: 0, posts: 0, status: 'unconfigured', verified: true }
+    facebook: { followers: 26409, reach: 185000, engagement: 1872, posts: 45, status: 'fallback', verified: false },
+    instagram: { followers: 2754, reach: 32000, engagement: 1306, posts: 1306, status: 'fallback', verified: false },
+    tiktok: { followers: 0, reach: 500, engagement: 4, posts: 5, status: 'fallback', verified: false },
+    linkedin: { followers: 609, reach: 8500, engagement: 142, posts: 24, status: 'fallback', verified: false },
+    x: { followers: 1, reach: 120, engagement: 5, posts: 5, status: 'fallback', verified: false },
+    youtube: { followers: 0, reach: 0, engagement: 0, posts: 0, status: 'unconfigured', verified: false }
   };
   private static lastScrapeTime = 0;
   private static isScraping = false;

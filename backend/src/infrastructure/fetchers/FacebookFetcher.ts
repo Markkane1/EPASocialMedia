@@ -16,9 +16,9 @@ export class FacebookFetcher implements ISocialFetcher {
   public async testConnection(): Promise<ConnectionTestResult> {
     if (!this.accessToken || !this.accessToken.trim()) {
       return {
-        status: 'OK',
+        status: 'ERROR',
         platform: 'facebook',
-        message: 'Connected via Live Public Web Probe (Verified Page: EnvironmentProtectionAgencyPunjab). Add FB_ACCESS_TOKEN for Meta Graph API.'
+        message: 'Meta API access token not configured (FB_ACCESS_TOKEN is missing). Please configure a valid Graph API Page token in Settings.'
       };
     }
 
@@ -61,8 +61,9 @@ export class FacebookFetcher implements ISocialFetcher {
     let engagement = 9400;
     let linkClicks = 1600;
     let visits = 22800;
-    let status: 'connected' | 'unauthenticated' | 'error' = 'connected';
-    let isFallback = false;
+    const hasToken = !!(this.accessToken && this.accessToken.trim());
+    let status: 'connected' | 'unauthenticated' | 'error' = hasToken ? 'connected' : 'unauthenticated';
+    let isFallback = !hasToken;
 
     if (this.accessToken && this.accessToken.trim()) {
       try {

@@ -94,10 +94,11 @@ async function runSmokeTests() {
 
   // 2. Authenticates Executive Account
   try {
+    const execPass = process.env.EXECUTIVE_PASSWORD || 'TestExecutive@2026!';
     const execLogin = await fetch(`${BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: 'executive', password: 'Executive@EPAPunjab2026!' })
+      body: JSON.stringify({ username: 'executive', password: execPass })
     });
     const execData = await execLogin.json();
     const ok = execLogin.status === 200 && !!execData.token && execData.user?.role === 'EXECUTIVE';
@@ -109,10 +110,11 @@ async function runSmokeTests() {
 
   // 3. Authenticates Admin Account
   try {
+    const adminPass = process.env.ADMIN_PASSWORD || 'TestAdmin@2026!';
     const adminLogin = await fetch(`${BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: 'admin', password: 'Admin@EPAPunjab2026!' })
+      body: JSON.stringify({ username: 'admin', password: adminPass })
     });
     const adminData = await adminLogin.json();
     const ok = adminLogin.status === 200 && !!adminData.token && adminData.user?.role === 'ADMIN';

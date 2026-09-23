@@ -94,6 +94,7 @@ model User {
   passwordHash String
   fullName     String
   role         UserRole  @default(EXECUTIVE)
+  isActive     Boolean   @default(true)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 

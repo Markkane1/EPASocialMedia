@@ -2,16 +2,20 @@ import { IUserRepository } from '../../domain/repositories/IUserRepository';
 import { User, UserRoleType } from '../../domain/entities/User';
 import { PrismaClientSingleton } from './PrismaClientSingleton';
 import { UserRole } from '@prisma/client';
+import { AuthService } from '../auth/AuthService';
 
 export class PrismaUserRepository implements IUserRepository {
   private inMemoryUsers: Map<string, User> = new Map();
 
   constructor() {
+    const adminPass = process.env.DEFAULT_ADMIN_PASSWORD || 'TestAdmin@2026!';
+    const execPass = process.env.DEFAULT_EXECUTIVE_PASSWORD || 'TestExecutive@2026!';
+
     // Seed default administrative and executive accounts
     const adminUser = new User({
       id: 'usr-admin-001',
       username: 'admin',
-      passwordHash: '1981c7a87e2efe7c56ba1667614c23b9:6efe404837639e5a4e41e5b5b15010eb404745725831775918843201fc35158612b6dd97f2515561c97ac96bb86c6350c9933c3c3ba054190db580912f2cee04',
+      passwordHash: AuthService.hashPassword(adminPass),
       fullName: 'EPA System Administrator',
       role: 'ADMIN',
       isActive: true,
@@ -21,7 +25,7 @@ export class PrismaUserRepository implements IUserRepository {
     const execUser = new User({
       id: 'usr-exec-002',
       username: 'executive',
-      passwordHash: '509a8e9ff6d66eaf5926db8be79361cb:a87495d68d2dc69bf1f4146ff82384ef6922022d7f20355c625dcb0a942ecefc1456ac863aab76d2e670baa6d2dc96fe21c3e0360f649277848f708f83b26692',
+      passwordHash: AuthService.hashPassword(execPass),
       fullName: 'EPA Executive Officer',
       role: 'EXECUTIVE',
       isActive: true,
@@ -47,6 +51,7 @@ export class PrismaUserRepository implements IUserRepository {
             passwordHash: record.passwordHash,
             fullName: record.fullName,
             role: record.role as UserRoleType,
+            isActive: (record as any).isActive !== undefined ? (record as any).isActive : true,
             createdAt: record.createdAt.toISOString()
           });
         }
@@ -71,6 +76,7 @@ export class PrismaUserRepository implements IUserRepository {
             passwordHash: record.passwordHash,
             fullName: record.fullName,
             role: record.role as UserRoleType,
+            isActive: (record as any).isActive !== undefined ? (record as any).isActive : true,
             createdAt: record.createdAt.toISOString()
           });
         }
@@ -97,15 +103,17 @@ export class PrismaUserRepository implements IUserRepository {
           update: {
             passwordHash: user.passwordHash,
             fullName: user.fullName,
-            role: user.role as UserRole
-          },
+            role: user.role as UserRole,
+            isActive: user.isActive
+          } as any,
           create: {
             id: user.id,
             username: user.username,
             passwordHash: user.passwordHash,
             fullName: user.fullName,
-            role: user.role as UserRole
-          }
+            role: user.role as UserRole,
+            isActive: user.isActive
+          } as any
         });
       } catch (err) {
         console.error('[DATABASE] Error persisting user to PostgreSQL:', err);
@@ -114,6 +122,29 @@ export class PrismaUserRepository implements IUserRepository {
   }
 
   public async listUsers(): Promise<User[]> {
+    const isConnected = await PrismaClientSingleton.checkConnection();
+    if (isConnected) {
+      try {
+        const prisma = PrismaClientSingleton.getInstance();
+        const records = await prisma.user.findMany({
+          orderBy: { createdAt: 'asc' }
+        });
+        if (records.length > 0) {
+          return records.map(r => new User({
+            id: r.id,
+            username: r.username,
+            passwordHash: r.passwordHash,
+            fullName: r.fullName,
+            role: r.role as UserRoleType,
+            isActive: (r as any).isActive !== undefined ? (r as any).isActive : true,
+            createdAt: r.createdAt.toISOString()
+          }));
+        }
+      } catch (err) {
+        console.error('[DATABASE] Error listing users from PostgreSQL:', err);
+      }
+    }
+
     return Array.from(this.inMemoryUsers.values());
   }
 }

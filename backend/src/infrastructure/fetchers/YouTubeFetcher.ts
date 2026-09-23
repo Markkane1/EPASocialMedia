@@ -6,9 +6,9 @@ export class YouTubeFetcher implements ISocialFetcher {
 
   public async testConnection(): Promise<ConnectionTestResult> {
     return {
-      status: 'OK',
+      status: 'ERROR',
       platform: 'youtube',
-      message: 'No YouTube channel launched yet by EPA Punjab (Channel Pending Launch).'
+      message: 'No YouTube channel or API key configured for EPA Punjab (Channel Pending Launch).'
     };
   }
 

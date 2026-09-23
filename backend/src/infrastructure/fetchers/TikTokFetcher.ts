@@ -12,9 +12,9 @@ export class TikTokFetcher implements ISocialFetcher {
 
   public async testConnection(): Promise<ConnectionTestResult> {
     return {
-      status: 'OK',
+      status: 'ERROR',
       platform: 'tiktok',
-      message: `Verified live TikTok profile "@${this.username.replace('@', '')}" via public web probe`
+      message: 'Official TikTok API integration not configured (Client Key/Secret required). Falling back to unauthenticated public probe.'
     };
   }
 
@@ -24,8 +24,8 @@ export class TikTokFetcher implements ISocialFetcher {
     let newFollowers = 0;
     let views = scraped.reach; // 500
     let engagement = scraped.engagement; // 4 likes
-    let status: 'connected' | 'unauthenticated' | 'error' = 'connected';
-    let isFallback = false;
+    let status: 'connected' | 'unauthenticated' | 'error' = 'unauthenticated';
+    let isFallback = true;
 
     return new PlatformMetric({
       platform: 'tiktok',

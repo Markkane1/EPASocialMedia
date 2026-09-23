@@ -16,9 +16,9 @@ export class InstagramFetcher implements ISocialFetcher {
   public async testConnection(): Promise<ConnectionTestResult> {
     if (!this.accessToken || !this.accessToken.trim()) {
       return {
-        status: 'OK',
+        status: 'ERROR',
         platform: 'instagram',
-        message: 'Connected via Live Public Web Probe (Verified Handle: @epapunjablive). Add IG_ACCESS_TOKEN for Instagram Graph API.'
+        message: 'Instagram Graph API access token not configured (IG_ACCESS_TOKEN is missing). Please configure a valid token in Settings.'
       };
     }
 
@@ -60,8 +60,9 @@ export class InstagramFetcher implements ISocialFetcher {
     let engagement = 1260;
     let linkClicks = 124;
     let visits = 602;
-    let status: 'connected' | 'unauthenticated' | 'error' = 'connected';
-    let isFallback = false;
+    const hasToken = !!(this.accessToken && this.accessToken.trim());
+    let status: 'connected' | 'unauthenticated' | 'error' = hasToken ? 'connected' : 'unauthenticated';
+    let isFallback = !hasToken;
 
     if (this.accessToken && this.accessToken.trim()) {
       try {

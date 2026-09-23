@@ -8,12 +8,12 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 async def scrape_all():
     results = {
-        'facebook': {'followers': 26409, 'reach': 185000, 'engagement': 1872, 'posts': 45, 'status': 'live_scraped', 'verified': True},
-        'instagram': {'followers': 2756, 'reach': 32000, 'engagement': 1306, 'posts': 1306, 'status': 'live_scraped', 'verified': True},
-        'tiktok': {'followers': 0, 'reach': 500, 'engagement': 4, 'posts': 5, 'status': 'live_scraped', 'verified': True},
-        'linkedin': {'followers': 609, 'reach': 8500, 'engagement': 142, 'posts': 24, 'status': 'live_scraped', 'verified': True},
-        'x': {'followers': 1, 'reach': 120, 'engagement': 5, 'posts': 5, 'status': 'live_scraped', 'verified': True},
-        'youtube': {'followers': 0, 'reach': 0, 'engagement': 0, 'posts': 0, 'status': 'unconfigured', 'verified': True}
+        'facebook': {'followers': 26409, 'reach': 185000, 'engagement': 1872, 'posts': 45, 'status': 'unverified', 'verified': False},
+        'instagram': {'followers': 2756, 'reach': 32000, 'engagement': 1306, 'posts': 1306, 'status': 'unverified', 'verified': False},
+        'tiktok': {'followers': 0, 'reach': 500, 'engagement': 4, 'posts': 5, 'status': 'unverified', 'verified': False},
+        'linkedin': {'followers': 609, 'reach': 8500, 'engagement': 142, 'posts': 24, 'status': 'unverified', 'verified': False},
+        'x': {'followers': 1, 'reach': 120, 'engagement': 5, 'posts': 5, 'status': 'unverified', 'verified': False},
+        'youtube': {'followers': 0, 'reach': 0, 'engagement': 0, 'posts': 0, 'status': 'unconfigured', 'verified': False}
     }
 
     try:
@@ -33,9 +33,12 @@ async def scrape_all():
                 m = re.search(r'(\d[\d,]*)\s+followers', text, re.I)
                 if m:
                     results['linkedin']['followers'] = int(m.group(1).replace(',', ''))
+                    results['linkedin']['status'] = 'live_scraped'
+                    results['linkedin']['verified'] = True
                 await page.close()
-            except Exception as e:
-                pass
+            except Exception:
+                results['linkedin']['status'] = 'failed'
+                results['linkedin']['verified'] = False
 
             # 2. Instagram
             try:
@@ -50,11 +53,14 @@ async def scrape_all():
                 m_p = re.search(r'([\d,]+)\s+Posts', meta_desc, re.I)
                 if m_f:
                     results['instagram']['followers'] = int(m_f.group(1).replace(',', ''))
+                    results['instagram']['status'] = 'live_scraped'
+                    results['instagram']['verified'] = True
                 if m_p:
                     results['instagram']['posts'] = int(m_p.group(1).replace(',', ''))
                 await page.close()
-            except Exception as e:
-                pass
+            except Exception:
+                results['instagram']['status'] = 'failed'
+                results['instagram']['verified'] = False
 
             # 3. Facebook
             try:
@@ -69,11 +75,14 @@ async def scrape_all():
                 m_t = re.search(r'([\d,]+)\s+talking about this', meta_desc, re.I)
                 if m_f:
                     results['facebook']['followers'] = int(m_f.group(1).replace(',', ''))
+                    results['facebook']['status'] = 'live_scraped'
+                    results['facebook']['verified'] = True
                 if m_t:
                     results['facebook']['engagement'] = int(m_t.group(1).replace(',', ''))
                 await page.close()
-            except Exception as e:
-                pass
+            except Exception:
+                results['facebook']['status'] = 'failed'
+                results['facebook']['verified'] = False
 
             # 4. TikTok
             try:
@@ -88,12 +97,16 @@ async def scrape_all():
                     m_f = re.search(r'"followerCount":\s*(\d+)', univ)
                     m_l = re.search(r'"heartCount":\s*(\d+)', univ)
                     m_v = re.search(r'"videoCount":\s*(\d+)', univ)
-                    if m_f: results['tiktok']['followers'] = int(m_f.group(1))
+                    if m_f:
+                        results['tiktok']['followers'] = int(m_f.group(1))
+                        results['tiktok']['status'] = 'live_scraped'
+                        results['tiktok']['verified'] = True
                     if m_l: results['tiktok']['engagement'] = int(m_l.group(1))
                     if m_v: results['tiktok']['posts'] = int(m_v.group(1))
                 await page.close()
-            except Exception as e:
-                pass
+            except Exception:
+                results['tiktok']['status'] = 'failed'
+                results['tiktok']['verified'] = False
 
             # 5. X
             try:
@@ -101,16 +114,18 @@ async def scrape_all():
                 await page.goto("https://x.com/epapunjab", wait_until="domcontentloaded", timeout=15000)
                 await page.wait_for_timeout(2000)
                 text = await page.evaluate("() => document.body.innerText")
-                # Also check title / data tags
                 m_f = re.search(r'"followers":\s*(\d+)', text)
                 if m_f:
                     results['x']['followers'] = int(m_f.group(1))
+                    results['x']['status'] = 'live_scraped'
+                    results['x']['verified'] = True
                 await page.close()
-            except Exception as e:
-                pass
+            except Exception:
+                results['x']['status'] = 'failed'
+                results['x']['verified'] = False
 
             await browser.close()
-    except Exception as e:
+    except Exception:
         pass
 
     # Print pure JSON output
