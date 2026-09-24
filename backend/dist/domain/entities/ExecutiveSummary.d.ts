@@ -4,6 +4,8 @@ export interface ExecutiveSummaryProps {
     watchTimeHrs: number;
     newFollowers: number;
     contentViews: number;
+    impressions?: number;
+    totalImpressions?: number;
     engagement: number;
 }
 export declare class ExecutiveSummary {
@@ -11,6 +13,8 @@ export declare class ExecutiveSummary {
     readonly watchTimeHrs: number;
     readonly newFollowers: number;
     readonly contentViews: number;
+    readonly impressions: number;
+    readonly totalImpressions: number;
     readonly engagement: number;
     constructor(props: ExecutiveSummaryProps);
     /**
@@ -22,6 +26,8 @@ export declare class ExecutiveSummary {
         watch_time_hrs: number;
         new_followers: number;
         content_views: number;
+        impressions: number;
+        total_impressions: number;
         engagement: number;
     };
 }

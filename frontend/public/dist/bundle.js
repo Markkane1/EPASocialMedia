@@ -876,7 +876,7 @@
     
         state.subscribe((eventType, data) => {
           if (eventType === 'METRICS_UPDATED' && data?.summary) {
-            this.render(data.summary, data.dateRange);
+            this.render(data.summary, data.dateRange, data.platforms);
           }
         });
       }
@@ -890,11 +890,20 @@
         animateCounter(el, value, duration, formatter);
       }
     
-      render(summary, dateRange) {
+      render(summary, dateRange, platforms) {
         if (!summary) return;
     
+        // Use total impressions for the Content Views / Total impressions card as requested
+        let impressionsCount = summary.total_impressions ?? summary.impressions;
+        if (impressionsCount == null && platforms) {
+          impressionsCount = Object.values(platforms).reduce((acc, p) => acc + (p.impressions ?? p.content_views ?? p.views ?? 0), 0);
+        }
+        if (impressionsCount == null) {
+          impressionsCount = summary.content_views;
+        }
+    
         this._animate(this.totalFollowersEl, summary.total_followers, 1400, formatNumber);
-        this._animate(this.contentViewsEl,   summary.content_views,   1600, formatNumber);
+        this._animate(this.contentViewsEl,   impressionsCount,        1600, formatNumber);
         this._animate(this.engagementEl,     summary.engagement,      1200, formatNumber);
     
         if (this.watchTimeEl) {

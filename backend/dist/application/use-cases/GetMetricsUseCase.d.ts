@@ -18,6 +18,8 @@ export interface GetMetricsResponse {
         watch_time_hrs: number;
         new_followers: number;
         content_views: number;
+        impressions?: number;
+        total_impressions?: number;
         engagement: number;
     };
     platforms: Record<string, ReturnType<PlatformMetric['toJSON']>>;
