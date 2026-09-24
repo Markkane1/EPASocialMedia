@@ -139,7 +139,8 @@ export class HeaderComponent {
       const el = document.getElementById(`menuItem_${platformKey}`);
       if (el) el.classList.add('active');
     } else if (view === 'settings') {
-      const el = document.getElementById('menuItemSettings');
+      const targetId = platformKey === 'users' ? 'menuItemUsers' : 'menuItemSettings';
+      const el = document.getElementById(targetId);
       if (el) el.classList.add('active');
     }
   }

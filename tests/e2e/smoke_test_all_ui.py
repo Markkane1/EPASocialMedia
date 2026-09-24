@@ -125,6 +125,7 @@ def run_all_ui_smoke_tests():
         record("Sidebar", "X Item (#menuItem_x)", page.locator("#menuItem_x").is_visible())
         record("Sidebar", "YouTube Item (#menuItem_youtube)", page.locator("#menuItem_youtube").is_visible())
         record("Sidebar", "API Settings Item (#menuItemSettings)", page.locator("#menuItemSettings").is_visible())
+        record("Sidebar", "User Management Item (#menuItemUsers)", page.locator("#menuItemUsers").is_visible())
 
         # External Link
         gov_link = page.locator('a[href="https://epd.punjab.gov.pk"]')
@@ -284,7 +285,44 @@ def run_all_ui_smoke_tests():
         save_btn = page.locator("#btnSaveApiConfig")
         record("Admin Portal", "Save Settings Action Button (#btnSaveApiConfig)", save_btn.is_visible())
 
-        page.screenshot(path=f"{ARTIFACT_DIR}/smoke_03_admin_settings.png")
+        # Tab Navigation Pills
+        record("Admin Portal", "API Credentials Tab Button (#tabBtnApiConfig)", page.locator("#tabBtnApiConfig").is_visible())
+        record("Admin Portal", "User Management Tab Button (#tabBtnUsers)", page.locator("#tabBtnUsers").is_visible())
+
+        # Switch to User Management Tab
+        page.click("#tabBtnUsers")
+        page.wait_for_timeout(800)
+        record("Admin Portal", "User Management Pane Active (#paneUsers)", page.locator("#paneUsers").is_visible())
+        record("Admin Portal", "API Config Pane Hidden (#paneApiConfig)", page.locator("#paneApiConfig").is_hidden())
+
+        # Check User Table & Rows
+        users_table = page.locator("#usersTable")
+        record("User Management", "Users Table Visible (#usersTable)", users_table.is_visible())
+        user_rows = page.locator("#usersTable tbody tr")
+        record("User Management", "User Rows Populated", user_rows.count() >= 2, f"{user_rows.count()} users found")
+
+        # Check Admin Row and Self-Protection
+        admin_row = page.locator('#usersTable tbody tr:has-text("admin")')
+        record("User Management", "Admin User Account Present", admin_row.is_visible())
+        admin_toggle = admin_row.locator(".user-status-toggle")
+        record("User Management", "Admin Self-Deactivation Toggle Disabled", admin_toggle.is_disabled())
+
+        # Check Executive Row and Active Toggle
+        exec_row = page.locator('#usersTable tbody tr:has-text("executive")')
+        record("User Management", "Executive User Account Present", exec_row.is_visible())
+        exec_toggle = exec_row.locator(".user-status-toggle")
+        record("User Management", "Executive Toggle Enabled", exec_toggle.is_enabled())
+
+        # Check RBAC Security Matrix Card
+        rbac_card = page.locator("#paneUsers .card:has-text('Role-Based Access Control (RBAC) Matrix')")
+        record("User Management", "RBAC Policy Matrix Card Visible", rbac_card.is_visible())
+
+        page.screenshot(path=f"{ARTIFACT_DIR}/smoke_04_user_management.png")
+
+        # Switch back to API Credentials Tab
+        page.click("#tabBtnApiConfig")
+        page.wait_for_timeout(400)
+        record("Admin Portal", "Restored API Credentials Pane (#paneApiConfig)", page.locator("#paneApiConfig").is_visible())
 
         # Back to Dashboard from Admin Settings
         settings_back = page.locator("#btnSettingsBack")
@@ -292,6 +330,17 @@ def run_all_ui_smoke_tests():
         settings_back.click()
         page.wait_for_timeout(500)
         record("Admin Portal", "Settings Back Navigation", page.locator("#viewDashboard").is_visible())
+
+        # Test Sidebar Direct Navigation to User Management
+        page.click("#menuItemUsers a")
+        page.wait_for_timeout(800)
+        record("Sidebar Route", "Direct Nav to User Management Pane (#paneUsers)", page.locator("#paneUsers").is_visible())
+        record("Sidebar Route", "User Management Tab Marked Active", "active" in (page.locator("#tabBtnUsers").get_attribute("class") or ""))
+
+        # Return to Dashboard
+        page.click("#menuItemOverview a")
+        page.wait_for_timeout(800)
+        record("Sidebar Route", "Return to Dashboard via Sidebar", page.locator("#viewDashboard").is_visible())
 
         # ---------------------------------------------------------------------
         # SCREEN 7: Sign Out Lifecycle

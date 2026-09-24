@@ -172,5 +172,30 @@ export const ApiClient = {
     }
     if (!res.ok) throw new Error(`Connection test failed: ${res.statusText}`);
     return await res.json();
+  },
+
+  async getUsers() {
+    const res = await fetch(`${BASE_URL}/api/users`, {
+      headers: this.getAuthHeaders()
+    });
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('UNAUTHORIZED');
+    }
+    if (!res.ok) throw new Error(`Failed to load users: ${res.statusText}`);
+    return await res.json();
+  },
+
+  async setUserStatus(username, isActive) {
+    const res = await fetch(`${BASE_URL}/api/users/${encodeURIComponent(username)}/status`, {
+      method: 'POST',
+      headers: this.getAuthHeaders(),
+      body: JSON.stringify({ isActive })
+    });
+    if (res.status === 401 || res.status === 403) {
+      throw new Error('UNAUTHORIZED');
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || `Failed to update user status: ${res.statusText}`);
+    return data;
   }
 };
