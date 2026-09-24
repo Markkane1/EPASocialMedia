@@ -22,6 +22,7 @@ export class HeaderComponent {
 
     this.initDateInputs();
     this.bindEvents();
+    this.updateAuthBadge();
 
     state.subscribe((eventType, data) => {
       if (eventType === 'METRICS_UPDATED') {
@@ -179,14 +180,22 @@ export class HeaderComponent {
 
   updateAuthBadge() {
     const user = state.currentUser;
-    if (state.isAdmin()) {
+    const isAdmin = state.isAdmin();
+
+    // Toggle administrative navigation visibility based on role (Hides Security & Settings for executive)
+    const adminNavItems = document.querySelectorAll('.admin-nav-item');
+    adminNavItems.forEach(el => {
+      el.style.display = isAdmin ? '' : 'none';
+    });
+
+    if (isAdmin) {
       if (this.adminPortalBtnText) this.adminPortalBtnText.textContent = 'Admin (Active)';
-      if (this.navUserNameEl) this.navUserNameEl.textContent = user.fullName || 'Administrator';
+      if (this.navUserNameEl) this.navUserNameEl.textContent = user?.fullName || 'Administrator';
       if (this.navUserRoleEl) this.navUserRoleEl.textContent = 'EPA Administrator';
     } else {
       if (this.adminPortalBtnText) this.adminPortalBtnText.textContent = 'Admin 🔒';
-      if (this.navUserNameEl) this.navUserNameEl.textContent = 'Executive Guest';
-      if (this.navUserRoleEl) this.navUserRoleEl.textContent = 'Viewer Role';
+      if (this.navUserNameEl) this.navUserNameEl.textContent = user?.fullName || 'Executive Officer';
+      if (this.navUserRoleEl) this.navUserRoleEl.textContent = 'EPA Executive';
     }
   }
 

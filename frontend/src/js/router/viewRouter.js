@@ -27,6 +27,11 @@ export class ViewRouter {
       const platformKey = hash.replace('#platform/', '').trim().toLowerCase();
       state.setView('platform', platformKey);
     } else if (hash === '#settings' || hash.startsWith('#settings/')) {
+      if (!state.isAdmin() && hash.includes('/users')) {
+        state.setView('dashboard');
+        window.location.hash = '#dashboard';
+        return;
+      }
       const tab = hash.includes('/users') ? 'users' : 'api-config';
       state.setView('settings', tab);
     } else {

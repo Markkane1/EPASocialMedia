@@ -123,12 +123,12 @@
             </a>
           </li>
 
-          <!-- Administration Section -->
-          <li class="menu-header small text-uppercase">
+          <!-- Administration Section (Admin role only) -->
+          <li class="menu-header small text-uppercase admin-nav-item" id="menuHeaderSecurity" style="display: none;">
             <span class="menu-header-text">Security & Settings</span>
           </li>
 
-          <li class="menu-item" id="menuItemSettings">
+          <li class="menu-item admin-nav-item" id="menuItemSettings" style="display: none;">
             <a href="#settings" class="menu-link" data-route="#settings">
               <i class="menu-icon tf-icons bx bx-cog"></i>
               <div class="text-truncate">API Settings</div>
@@ -136,7 +136,7 @@
             </a>
           </li>
 
-          <li class="menu-item" id="menuItemUsers">
+          <li class="menu-item admin-nav-item" id="menuItemUsers" style="display: none;">
             <a href="#settings/users" class="menu-link" data-route="#settings/users">
               <i class="menu-icon tf-icons bx bx-user-check"></i>
               <div class="text-truncate">User Management</div>

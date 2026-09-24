@@ -578,6 +578,11 @@
           const platformKey = hash.replace('#platform/', '').trim().toLowerCase();
           state.setView('platform', platformKey);
         } else if (hash === '#settings' || hash.startsWith('#settings/')) {
+          if (!state.isAdmin() && hash.includes('/users')) {
+            state.setView('dashboard');
+            window.location.hash = '#dashboard';
+            return;
+          }
           const tab = hash.includes('/users') ? 'users' : 'api-config';
           state.setView('settings', tab);
         } else {
@@ -623,6 +628,7 @@
     
         this.initDateInputs();
         this.bindEvents();
+        this.updateAuthBadge();
     
         state.subscribe((eventType, data) => {
           if (eventType === 'METRICS_UPDATED') {
@@ -780,14 +786,22 @@
     
       updateAuthBadge() {
         const user = state.currentUser;
-        if (state.isAdmin()) {
+        const isAdmin = state.isAdmin();
+    
+        // Toggle administrative navigation visibility based on role (Hides Security & Settings for executive)
+        const adminNavItems = document.querySelectorAll('.admin-nav-item');
+        adminNavItems.forEach(el => {
+          el.style.display = isAdmin ? '' : 'none';
+        });
+    
+        if (isAdmin) {
           if (this.adminPortalBtnText) this.adminPortalBtnText.textContent = 'Admin (Active)';
-          if (this.navUserNameEl) this.navUserNameEl.textContent = user.fullName || 'Administrator';
+          if (this.navUserNameEl) this.navUserNameEl.textContent = user?.fullName || 'Administrator';
           if (this.navUserRoleEl) this.navUserRoleEl.textContent = 'EPA Administrator';
         } else {
           if (this.adminPortalBtnText) this.adminPortalBtnText.textContent = 'Admin 🔒';
-          if (this.navUserNameEl) this.navUserNameEl.textContent = 'Executive Guest';
-          if (this.navUserRoleEl) this.navUserRoleEl.textContent = 'Viewer Role';
+          if (this.navUserNameEl) this.navUserNameEl.textContent = user?.fullName || 'Executive Officer';
+          if (this.navUserRoleEl) this.navUserRoleEl.textContent = 'EPA Executive';
         }
       }
     

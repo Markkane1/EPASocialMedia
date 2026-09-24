@@ -358,6 +358,33 @@ def run_all_ui_smoke_tests():
         token_after = page.evaluate("() => sessionStorage.getItem('epa_auth_token')")
         record("Auth Lifecycle", "SessionStorage Token Purged Cleanly", token_after is None or token_after == "")
 
+        # ---------------------------------------------------------------------
+        # SCREEN 9: Executive Session RBAC Navigation Restrictions
+        # ---------------------------------------------------------------------
+        print("\n=== [9/9] EXECUTIVE SESSION RBAC & NAVIGATION GATE ===")
+        page.fill("#appLoginUsername", "executive")
+        page.fill("#appLoginPassword", os.environ.get("EXECUTIVE_PASSWORD", "Executive@EPAPunjab2026!"))
+        page.click("#btnSubmitAppLogin")
+        page.wait_for_timeout(1200)
+
+        record("Executive RBAC", "Authenticates Executive Session", page.locator("#viewDashboard").is_visible())
+        record("Executive RBAC", "Security & Settings Header Hidden", page.locator("#menuHeaderSecurity").is_hidden())
+        record("Executive RBAC", "API Settings Item Hidden", page.locator("#menuItemSettings").is_hidden())
+        record("Executive RBAC", "User Management Item Hidden", page.locator("#menuItemUsers").is_hidden())
+        
+        # Test direct URL attempt
+        page.goto(f"{BASE_URL}/#settings/users")
+        page.wait_for_timeout(600)
+        exec_hash = page.evaluate("() => window.location.hash")
+        record("Executive RBAC", "Barred from #settings/users Direct Route", exec_hash == "#dashboard" or exec_hash == "")
+
+        page.screenshot(path=f"{ARTIFACT_DIR}/smoke_05_executive_sidebar_clean.png")
+
+        # Sign out executive
+        page.click("#appLogoutBtn")
+        page.wait_for_timeout(600)
+        record("Executive RBAC", "Executive Clean Logout", page.locator("#viewLogin").is_visible())
+
         browser.close()
 
     print("\n" + "=" * 80)
